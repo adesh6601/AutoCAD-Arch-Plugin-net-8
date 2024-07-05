@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Plugin": {
+      "commandName": "Project"
+    },
+    "exe": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe"
+    }
+  }
+}
