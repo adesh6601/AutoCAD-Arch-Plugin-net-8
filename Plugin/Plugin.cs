@@ -8,7 +8,7 @@ namespace Plugin
 {
     public class Plugin
     {
-        public static string ProjectPath = "C:\\Users\\Adesh Lad\\Documents\\Autodesk\\My Projects\\Sample Project 2024\\Sample Project.apj";
+        public static string ProjectPath = "C:\\Users\\Adesh Lad\\Documents\\Autodesk\\My Projects\\Sample Project 2025\\Sample Project.apj";
 
         Reader Reader = new Reader();
         Builder Builder = new Builder();

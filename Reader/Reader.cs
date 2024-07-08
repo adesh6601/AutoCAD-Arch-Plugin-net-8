@@ -1,11 +1,11 @@
 ﻿using System.Collections.Specialized;
-using System.Runtime.InteropServices;
 using System.Xml;
 using Autodesk.Aec.Arch.DatabaseServices;
 using Autodesk.Aec.DatabaseServices;
 using Autodesk.Aec.Project;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.InteropHelpers;
 using Newtonsoft.Json.Linq;
 using Collection;
 using Application = Autodesk.AutoCAD.ApplicationServices.Application;
@@ -318,17 +318,8 @@ public class Reader
 
 		try
 		{
-			/*Type acadType = Type.GetTypeFromProgID("AutoCAD.Application");
-			if (acadType == null)
-			{
-				return;
-			}
-
-			dynamic acadApp = Activator.CreateInstance(acadType);
-			Console.WriteLine("AutoCAD application found.");*/
-
-			dynamic acadApp = Marshal.GetActiveObject("AutoCAD.Application");
-			if (System.IO.File.Exists(dwgFullPath))
+			dynamic acadApp = COMInterop.GetActiveAcadApp();
+			if (File.Exists(dwgFullPath))
 			{
 				OpenedDoc = acadApp.Documents.Open(dwgFullPath);
 				SetDocument(file);
