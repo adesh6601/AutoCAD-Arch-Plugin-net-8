@@ -1,31 +1,9 @@
-﻿/// ComInterop.cs
-///
-/// ActivistInvestor / Tony T
-/// 
-/// Distributed under the terms of the MIT license.
-
-
-/// Helper classes for obtaining instances of AutoCAD
-/// COM objects for use with .NET Core, which does not
-/// support Marshal.GetActiveObject().
-/// 
-/// This code takes a brute-force approach to finding
-/// running instances of AutoCAD and AutoCAD documents,
-/// mainly because progid-based access is problematic.
-/// 
-/// Use the GetActiveAcadApp() method to get an active
-/// IAcadApplication object. See the docs below for more
-/// on using this with verticals.
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 
 namespace Autodesk.AutoCAD.InteropHelpers
 {
-
 	public static class COMInterop
 	{
 		[DllImport("ole32.dll", CharSet = CharSet.Unicode)]
@@ -62,33 +40,9 @@ namespace Autodesk.AutoCAD.InteropHelpers
 					System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(hr);
 				return null;
 			}
+
 			return obj;
 		}
-
-		/// <summary>
-		/// Returns the first running instance of an
-		/// AutoCAD.Application object found, or null
-		/// if no running instance was found.
-		/// </summary>
-		/// <param name="name">The value to match against
-		/// the object's Name property. For AutoCAD, the
-		/// default value can be used. For AutoCAD vertical
-		/// applications, the value should be whatever the
-		/// application object's Name property starts with.
-		/// 
-		/// Running the following LISP on the command
-		/// line will return the required value:
-		/// 
-		///    (vl-load-com)
-		///    (vla-get-Name (vlax-get-acad-object))
-		///    
-		/// No additional checks are done to ensure the
-		/// object is actually an AcadApplication verses
-		/// some other COM object having a Name property
-		/// whose value matches the target string.
-		/// 
-		/// </param>
-		/// <returns></returns>
 
 		public static object GetActiveAcadApp(string name = "AutoCAD")
 		{
@@ -104,22 +58,9 @@ namespace Autodesk.AutoCAD.InteropHelpers
 				{
 				}
 			}
+
 			return null;
 		}
-
-		/// <summary>
-		/// Returns an enumerable sequence of AcadDocument
-		/// objects from the rot.
-		/// 
-		/// Issue:
-		/// 
-		/// This method is only returning the first open document 
-		/// in the only instance of AutoCAD found in the ROT.
-		/// 
-		/// It would appear that not all open documents are being
-		/// registered with COM.
-		/// </summary>
-		/// <returns></returns>
 
 		public static IEnumerable<object> GetActiveAcadDocuments()
 		{
@@ -139,10 +80,6 @@ namespace Autodesk.AutoCAD.InteropHelpers
 					yield return comObject;
 			}
 		}
-
-		/// <summary>
-		/// Gets an enumeration of all objects in the ROT
-		/// </summary>
 
 		public static IEnumerable<object> GetActiveObjects()
 		{
@@ -171,6 +108,5 @@ namespace Autodesk.AutoCAD.InteropHelpers
 				}
 			}
 		}
-
 	}
 }

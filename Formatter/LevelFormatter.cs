@@ -491,7 +491,7 @@ public class LevelFormatter
                         }";
                 var initialJson = JObject.Parse(newJson1);
 
-                /*initialJson["width"] = window.Length;*/
+                initialJson["width"] = window.Length;
                 initialJson["height"] = window.Height;
                 initialJson["type"] = window.DisplayName;
                 initialJson["style"] = window.Style;

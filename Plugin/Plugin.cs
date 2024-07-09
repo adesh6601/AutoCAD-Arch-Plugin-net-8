@@ -32,7 +32,7 @@ namespace Plugin
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-            Writer.Write(SiteJson,"Site.json");
+            Writer.Write(SiteJson, "F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\Site25.json");
 
             stopwatch.Stop();
             
