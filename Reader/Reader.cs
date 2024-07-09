@@ -1,12 +1,12 @@
 ﻿using System.Collections.Specialized;
 using System.Xml;
+using Newtonsoft.Json.Linq;
 using Autodesk.Aec.Arch.DatabaseServices;
 using Autodesk.Aec.DatabaseServices;
 using Autodesk.Aec.Project;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.InteropHelpers;
-using Newtonsoft.Json.Linq;
 using Collection;
 using Application = Autodesk.AutoCAD.ApplicationServices.Application;
 
@@ -15,6 +15,7 @@ public class Reader
 	public EntityConvertor Convertor = new EntityConvertor();
 
 	public Project Project;
+	public ProjectFile ProjectFile { get; set; }
 	public ProjectFile[] ProjectFiles;
 
 	public Document Document;
@@ -28,14 +29,16 @@ public class Reader
 	public UnitsValue Unit { get; set; }
 	public double UnitConversionFactor { get; set; }
 
-	public ProjectFile xRefFile { get; set; }
+	public bool IsxRefFormConstruct { get; set; }
 
 	public Dictionary<string, HashSet<string>> DivisionsAndLevels = new Dictionary<string, HashSet<string>>();
 
-	public void ReadDWGFile(ref JObject ProjectProperties, string projectPath, Entities entities)
+	public void ReadProject(ref JObject ProjectProperties, string projectPath, Entities entities)
 	{
 		OpenProject(projectPath);
 		SetProjectFiles();
+
+		IsxRefFormConstruct = false;
 
 		foreach (ProjectFile projectFile in ProjectFiles)
 		{
@@ -47,21 +50,84 @@ public class Reader
 
 			SetDivisionsAndLevels(projectFile.FileFullPath);
 
-			ReadEntities(projectFile, entities);
+			ReadEntitiesForProject(projectFile, entities);
 			xRefs.Clear();
 			SetXRefs(projectFile);
 
 			foreach (string xRef in xRefs)
 			{
-				SetXrefFile(projectPath, xRef);
-				if (xRefFile == null) { continue; }
-				ReadEntities(xRefFile, entities);
-				ResetXRefFile();
+				//Need to Check work for all the cases.
+				SetProjectFile(projectPath, xRef);
+
+				if (ProjectFile == null) continue;
+
+				ReadEntitiesForProject(ProjectFile, entities);
+				ReSetProjectFile();
+			}
+
+		}
+		ProjectProperties = GetProjectProperties(projectPath);
+	}
+
+	public void ReadViews(ref JObject ProjectProperties, string projectPath, string viewPath, Entities entities)
+	{
+		OpenProject(projectPath);
+		SetViewFiles();
+
+		foreach (ProjectFile projectFile in ProjectFiles)
+		{
+			if (projectFile.Name == "" || !projectFile.DrawingFullPath.Equals(viewPath, StringComparison.OrdinalIgnoreCase))
+			{
+				continue;
+			}
+
+			StringCollection xRefsForView = new StringCollection();
+
+			xRefs.Clear();
+			SetXRefs(projectFile);
+
+			foreach (string item in xRefs)
+			{
+				xRefsForView.Add(item);
+			}
+
+			foreach (string xRef in xRefsForView)
+			{
+				xRefs.Clear();
+				IsxRefFormConstruct = true;
+
+				//Need to Check work for all the cases.
+				SetProjectFile(projectPath, xRef);
+
+				if (ProjectFile == null)
+				{
+					continue;
+				}
+
+				ReadEntitiesForViews(ProjectFile, entities);
+
+				SetXRefs(ProjectFile);
+				ReSetProjectFile();
+
+				if (xRefs.Count == 0)
+				{
+					continue;
+				}
+
+				foreach (string subxRef in xRefs)
+				{
+					IsxRefFormConstruct = false;
+					//Need to Check work for all the cases.
+					SetProjectFile(projectPath, subxRef);
+
+					if (ProjectFile == null) continue;
+
+					ReadEntitiesForProject(ProjectFile, entities);
+					ReSetProjectFile();
+				}
 			}
 		}
-
 		ProjectProperties = GetProjectProperties(projectPath);
-
 	}
 
 	public JObject GetProjectProperties(string projectPath)
@@ -87,11 +153,8 @@ public class Reader
 					JObject keyValuePairs = (JObject)projectInformation["Level"];
 					JObject levelProperties = new JObject
 					{
-						["ScheduleId"] = reader.GetAttribute("ScheduleId"),
 						["Height"] = Convert.ToString(Convert.ToInt64(reader.GetAttribute("Height")) / UnitConversionFactor),
-						["Description"] = reader.GetAttribute("Description"),
 						["Elevation"] = Convert.ToString(Convert.ToInt64(reader.GetAttribute("Elevation")) / UnitConversionFactor),
-						["Name"] = reader.GetAttribute("Name")
 					};
 
 					keyValuePairs[reader.GetAttribute("Id")] = levelProperties;
@@ -120,12 +183,29 @@ public class Reader
 		return projectInformation;
 	}
 
-	public void SetXrefFile(string projectPath, string xRef)
+	public void SetProjectFile(string projectPath, string xRef)
 	{
-		ProjectFile[] elementFiles = Project.GetElements();
-		foreach (var file in elementFiles)
+		string path = GetTructedPath(xRef);
+		string directoryPath = Path.GetDirectoryName(projectPath);
+		path = Path.Combine(directoryPath, path);
+
+		ProjectFile[] files;
+
+		if (IsxRefFormConstruct)
 		{
-			if (file.Name == "") continue;
+			files = Project.GetConstructs();
+		}
+		else
+		{
+			files = Project.GetElements();
+		}
+
+		foreach (var file in files)
+		{
+			if (file.Name == "")
+			{
+				continue;
+			}
 
 			//Need to Implement the logic for Furniture Removal
 			if (file.DrawingFullPath.IndexOf("Furniture", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -133,24 +213,98 @@ public class Reader
 				continue;
 			}
 
-			string projectFileName = Path.GetFileName(file.DrawingFullPath);
-			string xRefName = Path.GetFileName(xRef);
-			if (string.Equals(projectFileName, xRefName, StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(file.DrawingFullPath, path, StringComparison.OrdinalIgnoreCase))
 			{
-				xRefFile = file;
+				ProjectFile = file;
 				return;
 			}
+
+		}
+		return;
+	}
+
+	public string GetTructedPath(string path)
+	{
+		int startIndex = path.IndexOf("Elements");
+
+		// Check if the keyword is found in the string
+		if (startIndex != -1)
+		{
+			// Extract the substring starting from the keyword
+			string result = path.Substring(startIndex);
+			return result;
 		}
 
+		startIndex = path.IndexOf("Constructs");
+
+		// Check if the keyword is found in the string
+		if (startIndex != -1)
+		{
+			// Extract the substring starting from the keyword
+			string result = path.Substring(startIndex);
+			return result;
+		}
+
+		return "";
 	}
 
-	public void ResetXRefFile()
+	public void ReSetProjectFile()
 	{
-		xRefFile = null;
+		ProjectFile = null;
 	}
 
-	public void ReadEntities(ProjectFile projectFile, Entities entities)
+	public void ReadEntitiesForProject(ProjectFile projectFile, Entities entities)
 	{
+		OpenFileInApp(projectFile);
+
+		SetDatabase();
+		SetTransaction();
+		SetBlockTableRecorde();
+		SetUnit();
+		SetUnitConversionFactor();
+
+		foreach (Autodesk.AutoCAD.DatabaseServices.ObjectId objectId in BlockTableRecord)
+		{
+			object entity = GetEntity(objectId);
+			if (entity == null)
+			{
+				continue;
+			}
+
+			string entityType = GetEntityType(entity);
+			if (entityType == null || entityType == "")
+			{
+				continue;
+			}
+
+			object convertedEntity = Convertor.ConvertEntity(entity, entityType, UnitConversionFactor);
+			if (convertedEntity == null)
+			{
+				continue;
+			}
+
+			AddEntityPosition(entityType, convertedEntity);
+			AddEntityMaterial(entity, entityType, convertedEntity);
+			AddEntityStyle(entity, entityType, convertedEntity);
+
+			if (entityType == "opening" || entityType == "door" || entityType == "window" || entityType == "windowAssembly")
+			{
+				AddEntityAnchor(entity, ref entityType, convertedEntity);
+			}
+
+			AddEntityToEntites(entityType, convertedEntity, entities);
+		}
+		ResetTransaction();
+		CloseFileInApp();
+	}
+
+	public void ReadEntitiesForViews(ProjectFile projectFile, Entities entities)
+	{
+		DivisionsAndLevels.Clear();
+		SetDivisionsAndLevels(projectFile.FileFullPath);
+
+		if (DivisionsAndLevels.Count == 0) return;
+
 		OpenFileInApp(projectFile);
 
 		SetDatabase();
@@ -196,14 +350,27 @@ public class Reader
 
 	public void OpenProject(string projectPath)
 	{
-		ProjectBaseServices projectBaseServices = ProjectBaseServices.Service;
-		ProjectBaseManager projectManager = projectBaseServices.ProjectManager;
-		Project = projectManager.OpenProject(OpenMode.ForRead, projectPath);
+		try
+		{
+			ProjectBaseServices projectBaseServices = ProjectBaseServices.Service;
+			ProjectBaseManager projectManager = projectBaseServices.ProjectManager;
+			Project = projectManager.OpenProject(OpenMode.ForRead, projectPath);
+		}
+		catch (Exception ex)
+		{
+			//System.Windows.MessageBox.Show(ex.Message);
+		}
+
 	}
 
 	public void SetProjectFiles()
 	{
 		ProjectFiles = Project.GetConstructs();
+	}
+
+	public void SetViewFiles()
+	{
+		ProjectFiles = Project.GetViews();
 	}
 
 	public void SetDivisionsAndLevels(string filePath)
@@ -319,7 +486,7 @@ public class Reader
 		try
 		{
 			dynamic acadApp = COMInterop.GetActiveAcadApp();
-			if (File.Exists(dwgFullPath))
+			if (System.IO.File.Exists(dwgFullPath))
 			{
 				OpenedDoc = acadApp.Documents.Open(dwgFullPath);
 				SetDocument(file);
@@ -370,30 +537,29 @@ public class Reader
 
 	public void SetUnitConversionFactor()
 	{
-		if (Unit is Autodesk.AutoCAD.DatabaseServices.UnitsValue.Inches)
+		if (Unit is UnitsValue.Inches)
 		{
 			UnitConversionFactor = 12.00;
 			return;
 		}
 
-		if (Unit is Autodesk.AutoCAD.DatabaseServices.UnitsValue.Meters)
+		if (Unit is UnitsValue.Meters)
 		{
 			UnitConversionFactor = 0.3048;
 			return;
 		}
 
-		if (Unit is Autodesk.AutoCAD.DatabaseServices.UnitsValue.Millimeters)
+		if (Unit is UnitsValue.Millimeters)
 		{
 			UnitConversionFactor = 304.8;
 			return;
 		}
 
-		if (Unit is Autodesk.AutoCAD.DatabaseServices.UnitsValue.Feet)
+		if (Unit is UnitsValue.Feet)
 		{
 			UnitConversionFactor = 1.0;
 			return;
 		}
-		return;
 	}
 
 	public dynamic GetEntity(Autodesk.AutoCAD.DatabaseServices.ObjectId objectId)

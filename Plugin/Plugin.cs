@@ -1,43 +1,74 @@
-﻿using System.Diagnostics;
-using Autodesk.AutoCAD.Runtime;
+﻿using Autodesk.AutoCAD.Runtime;
+using Newtonsoft.Json.Linq;
 using Collection;
 using Model;
-using Newtonsoft.Json.Linq;
 
 namespace Plugin
 {
-    public class Plugin
-    {
-        public static string ProjectPath = "C:\\Users\\Adesh Lad\\Documents\\Autodesk\\My Projects\\Sample Project 2025\\Sample Project.apj";
+	public class Plugin
+	{
+		public static string ProjectPath { get; set; } = "C:\\Users\\Adesh Lad\\Documents\\Autodesk\\My Projects\\Sample Project 2024\\Sample Project.apj";
+		public static string ViewsPath { get; set; }
 
-        Reader Reader = new Reader();
-        Builder Builder = new Builder();
-		Formatter Formatter = new Formatter();
-        Writer Writer = new Writer();
+		Reader Reader;
+		Builder Builder;
+		Formatter Formatter;
+		Writer Writer;
 
-        Entities Entities = new Entities();
-        Site Site = new Site();
-        JObject SiteJson = new JObject();
+		Entities Entities;
+		Site Site;
 
-        JObject ProjectProperties = new JObject();
+		JObject SiteJson;
+		JObject ProjectProperties;
 
-        [CommandMethod("Initiate")]
-		public void InitiateDataCollection()
-        {
-            Stopwatch stopwatch = Stopwatch.StartNew();
+		[CommandMethod("InitiateReadProject")]
+		public void InitiateReadProject()
+		{
+			Reader = new Reader();
+			Builder = new Builder();
+			Formatter = new Formatter();
+			Writer = new Writer();
 
-            Reader.ReadDWGFile(ref ProjectProperties, ProjectPath, Entities);
+			Entities = new Entities();
+			Site = new Site();
+
+			SiteJson = new JObject();
+			ProjectProperties = new JObject();
+
+			Reader.ReadProject(ref ProjectProperties, ProjectPath, Entities);
 
 			Builder.Build(Entities, Site);
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-            Writer.Write(SiteJson, "F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\Site25.json");
+			Writer.Write(SiteJson, "F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\SiteProject25.json");
 
-            stopwatch.Stop();
-            
-            // Log or display the elapsed time
-            Writer.WriteToFile("timeTaken.txt", $"Time taken to execute InitiateDataCollection: {stopwatch.ElapsedMilliseconds} ms");
-        }
+			//MessageBox.Show("Data Extracted Successfully");
+		}
+
+		[CommandMethod("InitiateReadView")]
+		public void InitiateReadView()
+		{
+			Reader = new Reader();
+			Builder = new Builder();
+			Formatter = new Formatter();
+			Writer = new Writer();
+
+			Entities = new Entities();
+			Site = new Site();
+
+			SiteJson = new JObject();
+			ProjectProperties = new JObject();
+
+			Reader.ReadViews(ref ProjectProperties, ProjectPath, ViewsPath, Entities);
+
+			Builder.Build(Entities, Site);
+
+			Formatter.Format(ProjectProperties, Site, SiteJson);
+
+			Writer.Write(SiteJson, "F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\SiteView25.json");
+
+			//MessageBox.Show("Data Extracted Successfully");
+		}
 	}
 }

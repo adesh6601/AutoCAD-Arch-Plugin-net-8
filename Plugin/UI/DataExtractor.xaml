@@ -1,0 +1,76 @@
+﻿
+<Window x:Class="Plugin.UI.DataExtractor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Plugin.UI"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Title="DataExtractor" Height="380" Width="610"
+        Background ="White"
+        WindowStartupLocation ="CenterScreen">
+
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="5"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid Margin="0" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Background="Gray"  Margin="0">
+            <TextBlock Text="DataExtractor" FontWeight="Bold" Margin="5,5,5,5" Foreground="White" VerticalAlignment="Center"/>
+            <Button Content="X" Click="CloseButton_Click" Width="30" Margin="490,0,0,0" Background="Red" Foreground="White" VerticalAlignment="Center"/>
+        </DockPanel>
+
+        <StackPanel Grid.Row="1" Margin="10,10,10,0">
+            <TextBlock Text="This tool extracts object data from drawings that can be exported to an external file." 
+                TextWrapping="Wrap" Margin="0,0,0,0"/>
+            <TextBlock></TextBlock>
+
+            <StackPanel Margin="20,0,0,0">
+                <TextBlock Text="Browse the Project APJ file." Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="apjTextPath" Width="450" Margin="0,0,10,0" IsEnabled="True"/>
+                    <Button x:Name="ApjBrowseButton" Content="..." Margin="10,0,0,0" Width="30" IsEnabled="True" Click="ApjBrowseButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+
+            <TextBlock Text="Select whether to extract data for views or for entire project." 
+                TextWrapping="Wrap" Margin="0,20,0,10"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="5">
+            <RadioButton x:Name="projectRadioButton" Content="Extract project information" Margin="10,10,10,0" IsChecked="False" Checked="ProjectRadioButton_Checked"/>
+            <StackPanel Orientation="Vertical" Margin="15,0,5,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="projectTextPath" Width="450" Margin="10" IsEnabled="False"/>
+                    <Button x:Name="projectBrowseButton" Content="..." Margin="10" Width="30" IsEnabled="False" Click="ProjectBrowseButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+
+            <RadioButton x:Name="viewsRadioButton" Content="Extract Views information" Margin="10" IsChecked="False" Checked="ViewsRadioButton_Checked"/>
+            <StackPanel Orientation="Vertical" Margin="15,0,5,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="viewTextPath"   Width="450"  Margin="10" IsEnabled="False"/>
+                    <Button x:Name="viewBrowseButton" Content="..." Margin="10" Width="30" IsEnabled="False" Click="ViewsBrowseButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <Separator Grid.Row="3" Margin="10,20,10,0"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Reset" Width="75" Margin="10" Click="ResetButton_Click"/>
+            <Button Content="Submit" Width="75" Margin="10" Click="SubmitButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
+
