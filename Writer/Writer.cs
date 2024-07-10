@@ -18,9 +18,6 @@ public class Writer
 	{
 		try
 		{
-			string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-			//using (StreamWriter writer = new StreamWriter(currentDirectory + "\\" + filePath))
 			using (StreamWriter writer = new StreamWriter(filePath))
 			{
 				writer.WriteLine(text);

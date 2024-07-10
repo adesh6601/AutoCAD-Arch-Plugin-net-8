@@ -7,8 +7,9 @@ namespace Plugin
 {
 	public class Plugin
 	{
-		public static string ProjectPath { get; set; } = "C:\\Users\\Adesh Lad\\Documents\\Autodesk\\My Projects\\Sample Project 2024\\Sample Project.apj";
+		public static string ProjectPath { get; set; }
 		public static string ViewsPath { get; set; }
+		public static string OutputFilePath { get; set; }
 
 		Reader Reader;
 		Builder Builder;
@@ -20,6 +21,7 @@ namespace Plugin
 
 		JObject SiteJson;
 		JObject ProjectProperties;
+
 
 		[CommandMethod("InitiateReadProject")]
 		public void InitiateReadProject()
@@ -41,9 +43,11 @@ namespace Plugin
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-			Writer.Write(SiteJson, "F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\SiteProject25.json");
+			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + "Site.json";
 
-			//MessageBox.Show("Data Extracted Successfully");
+			Writer.Write(SiteJson, OutputFilePath);
+
+			System.Windows.MessageBox.Show("Data Extracted Successfully");
 		}
 
 		[CommandMethod("InitiateReadView")]
@@ -66,9 +70,11 @@ namespace Plugin
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-			Writer.Write(SiteJson, "F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\SiteView25.json");
+			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(ViewsPath) + "View.json";
 
-			//MessageBox.Show("Data Extracted Successfully");
+			Writer.Write(SiteJson, OutputFilePath);
+
+			System.Windows.MessageBox.Show("Data Extracted Successfully");
 		}
 	}
 }

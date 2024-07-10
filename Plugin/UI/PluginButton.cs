@@ -66,17 +66,17 @@ namespace Plugin.UI
             existingTab.Panels.Add(newPanel);
 
             //For running in application
-            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             //System.Windows.MessageBox.Show(currentDirectory);
             //string exchangeImagePath = System.IO.Path.Combine(currentDirectory, "..\\Resources\\logo.png");
 
 
 			//For running in debug mode
-			//string exchangeImagePath = System.IO.Path.GetFullPath("..\\..\\resources\\logo.png");
+			string exchangeImagePath = System.IO.Path.GetFullPath("..\\..\\..\\resources\\logo.png");
 
 
 			// full hard path for testing
-			string exchangeImagePath = System.IO.Path.GetFullPath("F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\AutoCAD_Connector_net8.0\\AutoCAD-Arch-Plugin\\Plugin\\Resources\\logo.png");
+			//string exchangeImagePath = System.IO.Path.GetFullPath("F:\\adesh_workspace\\SH-repos\\AutoCAD-Arch-plugin-repo\\AutoCAD_Connector_net8.0\\AutoCAD-Arch-Plugin\\Plugin\\Resources\\logo.png");
 
 			// Create a new button
 			RibbonButton dataExtractorButton = new RibbonButton
