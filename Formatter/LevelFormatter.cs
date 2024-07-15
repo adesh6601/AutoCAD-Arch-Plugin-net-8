@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using Component;
 using Model;
 
@@ -29,7 +31,7 @@ public class LevelFormatter
         MakeRoofSlabs();
         MakeLayer();
         // makeZones();
-        /*MakeStructuralMembers(structuralMemberDictionary);*/
+        //MakeStructuralMembers(structuralMemberDictionary);
     }
     public static double PolygonArea(List<List<double>> vertices)
     {
@@ -50,7 +52,7 @@ public class LevelFormatter
         // Take the absolute value and divide by 2
         area = Math.Abs(area) / 2;
         return area;
-    }   
+    }
     public bool IsUniquePoint(Point InPoint, Dictionary<int, Point> uniqueVertices)
     {
         foreach (var Point in uniqueVertices)
@@ -143,13 +145,13 @@ public class LevelFormatter
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
                 IndexOfUniqueVertces++;
                 var startVertex = new Vertex();
-                startVertex.id = GenerateId();
-                startVertex.name = "Vertex";
+                string uniqueId = GenerateId();
+                startVertex.type = "Vertex";
                 startVertex.x = pair.StartPoint.X;
                 startVertex.y = pair.StartPoint.Y;
                 startVertex.Lines = new List<string>();
 
-                Vertices.Add(startVertex.id, startVertex);
+                Vertices.Add(uniqueId, startVertex);
 
             }
             if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
@@ -158,13 +160,13 @@ public class LevelFormatter
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
                 IndexOfUniqueVertces++;
                 var endVertex = new Vertex();
-                endVertex.id = GenerateId();
-                endVertex.name = "Vertex";
+                string uniqueId = GenerateId();
+                endVertex.type = "Vertex";
                 endVertex.x = pair.EndPoint.X;
                 endVertex.y = pair.EndPoint.Y;
                 endVertex.Lines = new List<string>();
 
-                Vertices.Add(endVertex.id, endVertex);
+                Vertices.Add(uniqueId, endVertex);
 
             }
 
@@ -179,13 +181,13 @@ public class LevelFormatter
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
                 IndexOfUniqueVertces++;
                 var startVertex = new Vertex();
-                startVertex.id = GenerateId();
-                startVertex.name = "Vertex";
+                string uniqueId = GenerateId();
+                startVertex.type = "Vertex";
                 startVertex.x = pair.StartPoint.X;
                 startVertex.y = pair.StartPoint.Y;
                 startVertex.Lines = new List<string>();
 
-                Vertices.Add(startVertex.id, startVertex);
+                Vertices.Add(uniqueId, startVertex);
 
             }
             if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
@@ -195,13 +197,13 @@ public class LevelFormatter
                 IndexOfUniqueVertces++;
 
                 var endVertex = new Vertex();
-                endVertex.id = GenerateId();
-                endVertex.name = "Vertex";
+                string uniqueId = GenerateId();
+                endVertex.type = "Vertex";
                 endVertex.x = pair.EndPoint.X;
                 endVertex.y = pair.EndPoint.Y;
                 endVertex.Lines = new List<string>();
 
-                Vertices.Add(endVertex.id, endVertex);
+                Vertices.Add(uniqueId, endVertex);
 
             }
 
@@ -216,13 +218,13 @@ public class LevelFormatter
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
                 IndexOfUniqueVertces++;
                 var startVertex = new Vertex();
-                startVertex.id = GenerateId();
-                startVertex.name = "Vertex";
+                string uniqueId = GenerateId();
+                startVertex.type = "Vertex";
                 startVertex.x = pair.StartPoint.X;
                 startVertex.y = pair.StartPoint.Y;
                 startVertex.Lines = new List<string>();
 
-                Vertices.Add(startVertex.id, startVertex);
+                Vertices.Add(uniqueId, startVertex);
 
             }
             if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
@@ -230,53 +232,36 @@ public class LevelFormatter
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
                 IndexOfUniqueVertces++;
                 var endVertex = new Vertex();
-                endVertex.id = GenerateId();
-                endVertex.name = "Vertex";
+                string uniqueId = GenerateId();
+                endVertex.type = "Vertex";
                 endVertex.x = pair.EndPoint.X;
                 endVertex.y = pair.EndPoint.Y;
                 endVertex.Lines = new List<string>();
 
-                Vertices.Add(endVertex.id, endVertex);
+                Vertices.Add(uniqueId, endVertex);
 
             }
 
         }
-
-
     }
     public void GetLinesDictionary()
     {
         foreach (var line in Floor.Walls)
         {
             var l1 = new Line2D();
-            l1.id = GenerateId();
-            //l1.id = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length-2);
+            string uniqueId = GenerateId();
             l1.type = line.DisplayName;
-            l1.name = "wall";
             string newJson = @"{
                         ""style"":"""",
-                        ""length"": 300,
+                        ""length"": 0,
                         ""height"":0,
                         ""baseOffset"":0,
-                        ""thickness"": 10.236666666666668,
-                        ""userSetPartition"": false,
-                        ""materialProperties"": {
-                            ""uValueUnit"": ""Btu/(hr-ft²-°F)"",
-                            ""absorptivity"": 0.9,
-                            ""materialAssembly"": ""Face Brick + 1\"" Insulation + 4\"" LW Concrete Block"",
-                            ""wallGroup"": ""D"",
-                            ""thicknessUnit"": ""in"",
-                            ""total_Thickness"": 6.142,
-                            ""uValue"": 0.184,
-                            ""transmissivity"": 0,
-                            ""colorAdjustmentFactor"": 1
-                        }
-                    }";
+                        ""thickness"": 0
+                      }";
             var initialJson = JObject.Parse(newJson);
             initialJson["length"] = line.Length;
             initialJson["height"] = line.BaseHeight;
             initialJson["thickness"] = line.Width;// Set the desired length value here
-            initialJson["type"] = line.DisplayName;
             initialJson["style"] = line.Style;
             initialJson["baseOffset"] = line.StartPoint.Z;
 
@@ -295,20 +280,20 @@ public class LevelFormatter
                 l1.vertices = GetVerticesOfLine(points);
                 l1.holes = new List<string>();
                 string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
-                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, l1.id); }
-                Lines.Add(l1.id, l1);
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, uniqueId); }
+                Lines.Add(uniqueId, l1);
 
                 if (l1.vertices != null)
                 {
                     foreach (var vertexId in l1.vertices)
                     {
-                        Vertices[vertexId].Lines.Add(l1.id);
+                        Vertices[vertexId].Lines.Add(uniqueId);
                     }
                 }
             }
             else
             {
-                var test = ""; //To check any line which don't contains two vertices
+                string test = ""; //To check any line which don't contains two vertices
             }
 
         }
@@ -316,28 +301,14 @@ public class LevelFormatter
         foreach (var line in Floor.CurtainWallLayouts)
         {
             var l1 = new Line2D();
-            l1.id = GenerateId();
-            //l1.id = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length-2);
+            string uniqueId = GenerateId();
             l1.type = line.DisplayName;
-            l1.name = "wall";
             string newJson = @"{
                         ""style"":"""",
-                        ""length"": 300,
+                        ""length"": 0,
                         ""height"":0,
                         ""baseOffset"":0,
                         ""thickness"": 0.1236666666666668,
-                        ""userSetPartition"": false,
-                        ""materialProperties"": {
-                            ""uValueUnit"": ""Btu/(hr-ft²-°F)"",
-                            ""absorptivity"": 0.9,
-                            ""materialAssembly"": ""Face Brick + 1\"" Insulation + 4\"" LW Concrete Block"",
-                            ""wallGroup"": ""D"",
-                            ""thicknessUnit"": ""in"",
-                            ""total_Thickness"": 6.142,
-                            ""uValue"": 0.184,
-                            ""transmissivity"": 0,
-                            ""colorAdjustmentFactor"": 1
-                        }
                     }";
             var initialJson = JObject.Parse(newJson);
             initialJson["length"] = line.Length;
@@ -359,48 +330,34 @@ public class LevelFormatter
                 l1.vertices = GetVerticesOfLine(points);
                 l1.holes = new List<string>();
                 string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
-                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, l1.id); }
-                Lines.Add(l1.id, l1);
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, uniqueId); }
+                Lines.Add(GenerateId(), l1);
 
                 if (l1.vertices != null)
                 {
                     foreach (var vertexId in l1.vertices)
                     {
-                        Vertices[vertexId].Lines.Add(l1.id);
+                        Vertices[vertexId].Lines.Add(uniqueId);
                     }
                 }
             }
             else
             {
-                var Test = "";  //To check any line which don't contain two vertices
+                string Test = "";  //To check any line which don't contain two vertices
             }
         }
 
         foreach (var line in Floor.CurtainWallUnits)
         {
             var l1 = new Line2D();
-            l1.id = GenerateId();
-            //l1.id = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length-2);
+            string uniqueId = GenerateId();
             l1.type = line.DisplayName;
-            l1.name = "wall";
             string newJson = @"{                        
                         ""style"":"""",
                         ""length"": 300,
                         ""thickness"": 0.1236666666666668,
                         ""height"":0,
                         ""baseOffset"":0,
-                        ""userSetPartition"": false,
-                        ""materialProperties"": {
-                            ""uValueUnit"": ""Btu/(hr-ft²-°F)"",
-                            ""absorptivity"": 0.9,
-                            ""materialAssembly"": ""Face Brick + 1\"" Insulation + 4\"" LW Concrete Block"",
-                            ""wallGroup"": ""D"",
-                            ""thicknessUnit"": ""in"",
-                            ""total_Thickness"": 6.142,
-                            ""uValue"": 0.184,
-                            ""transmissivity"": 0,
-                            ""colorAdjustmentFactor"": 1
-                        }
                     }";
             var initialJson = JObject.Parse(newJson);
             initialJson["length"] = line.Length;
@@ -422,24 +379,23 @@ public class LevelFormatter
                 l1.vertices = GetVerticesOfLine(points);
                 l1.holes = new List<string>();
                 string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
-                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, l1.id); }
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, uniqueId); }
 
-                Lines.Add(l1.id, l1);
+                Lines.Add(GenerateId(), l1);
 
                 if (l1.vertices != null)
                 {
                     foreach (var vertexId in l1.vertices)
                     {
-                        Vertices[vertexId].Lines.Add(l1.id);
+                        Vertices[vertexId].Lines.Add(uniqueId);
                     }
                 }
             }
             else
             {
-                var Test = ""; //To check any line which don't contain two vertices
+                string Test = ""; //To check any line which don't contain two vertices
             }
         }
-
 
     }
     public void MakeHole()
@@ -455,39 +411,18 @@ public class LevelFormatter
 
                 Holes windowHole = new Holes();
                 windowHole.line = ObjectIdTojsonIdDictionary[window.WallId];
-                windowHole.id = GenerateId();
-                Lines[windowHole.line].holes.Add(windowHole.id);
-
-                // windowHole.id = window.ObjectId.ToString().Substring(1, window.ObjectId.ToString().Length - 2); ;
+                string uniqueId = GenerateId();
+                Lines[windowHole.line].holes.Add(uniqueId);
                 windowHole.type = window.DisplayName;
-                windowHole.name = "window";
                 string newJson1 = @"{
-                        ""width"": 0.18,
-                        ""height"": 0.35,
-                        ""altitude"": 0.25,
-                        ""thickness"": 0.6,
+                        ""width"": 0,
+                        ""height"": 0,
+                        ""altitude"": 0,
+                        ""thickness"": 0,
                         ""style"":"""",
                         ""frameWidth"":"""",
                         ""frameDepth"":"""",
-                        ""glassThickness"":"""",
-                        ""infiltration"": true,
-                        ""materialProperties"": {
-                            ""uValueUnit"": ""Btu/(hr-ft²-°F)"",
-                            ""infiltrationThickness"": 0.05,
-                            ""color"": [
-                                171,
-                                170,
-                                175
-                            ],
-                            ""absorptivity"": ""0.459"",
-                            ""shadingCoefficient"": 0.647,
-                            ""materialAssembly"": ""Double Glazing – 1/4” Gray Tint Glass with 1/4” Air Space"",
-                            ""thicknessUnit"": ""in"",
-                            ""total_Thickness"": ""0.75"",
-                            ""infoText"": ""Glass + Air + Glass"",
-                            ""uValue"": ""0.56"",
-                            ""transmissivity"": ""0.479""
-                            }
+                        ""glassThickness"":""""
                         }";
                 var initialJson = JObject.Parse(newJson1);
 
@@ -553,12 +488,12 @@ public class LevelFormatter
                 normal1.z = window.Normal.Z;
                 windowHole.normal = normal1;
 
-                if (!ObjectIdTojsonIdDictionary.ContainsKey(window.ObjectId.ToString())) { ObjectIdTojsonIdDictionary.Add(window.ObjectId.ToString(), windowHole.id); }
-                Holes.Add(windowHole.id, windowHole);
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(window.ObjectId.ToString())) { ObjectIdTojsonIdDictionary.Add(window.ObjectId.ToString(), uniqueId); }
+                Holes.Add(uniqueId, windowHole);
             }
             else
             {
-                var Test = ""; // To check windowAssembly has a wall or Not
+                string Test = ""; // To check windowAssembly has a wall or Not
             }
 
 
@@ -573,13 +508,11 @@ public class LevelFormatter
                 Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
 
                 Holes windowHole = new Holes();
-                windowHole.id = GenerateId();
+                string uniqueId = GenerateId();
                 windowHole.line = ObjectIdTojsonIdDictionary[window.WallId];
-                Lines[windowHole.line].holes.Add(windowHole.id);
+                Lines[windowHole.line].holes.Add(uniqueId);
 
-                // windowHole.id = window.ObjectId.ToString().Substring(1, window.ObjectId.ToString().Length - 2); ;
                 windowHole.type = window.DisplayName;
-                windowHole.name = "window";
                 string newJson1 = @"{
                         ""width"": 0.18,
                         ""height"": 0.35,
@@ -588,25 +521,7 @@ public class LevelFormatter
                         ""style"":"""",
                         ""frameWidth"":"""",
                         ""frameDepth"":"""",
-                        ""glassThickness"":"""",
-                        ""infiltration"": true,
-                        ""materialProperties"": {
-                            ""uValueUnit"": ""Btu/(hr-ft²-°F)"",
-                            ""infiltrationThickness"": 0.05,
-                            ""color"": [
-                                171,
-                                170,
-                                175
-                            ],
-                            ""absorptivity"": ""0.459"",
-                            ""shadingCoefficient"": 0.647,
-                            ""materialAssembly"": ""Double Glazing – 1/4” Gray Tint Glass with 1/4” Air Space"",
-                            ""thicknessUnit"": ""in"",
-                            ""total_Thickness"": ""0.75"",
-                            ""infoText"": ""Glass + Air + Glass"",
-                            ""uValue"": ""0.56"",
-                            ""transmissivity"": ""0.479""
-                            }
+                        ""glassThickness"":""""
                         }";
                 var initialJson = JObject.Parse(newJson1);
                 //initialJson["altitude"] = window.StartPoint.Z;
@@ -617,8 +532,10 @@ public class LevelFormatter
                                     initialJson["FrameDepth"] = window.FrameDepth;
                                     initialJson["GlassThickness"] = window.GlassThickness;*/
                 initialJson["altitude"] = window.StartPoint.Z;
+
                 string modifiedJson = initialJson.ToString();
                 windowHole.properties = JObject.Parse(modifiedJson);
+
                 Point startWindow = new Point(window.StartPoint.X, window.StartPoint.Y, 0.0);
                 Point endWindow = new Point(window.EndPoint.X, window.EndPoint.Y, 0.0);
                 windowHole.startPoint = startWindow;
@@ -675,11 +592,11 @@ public class LevelFormatter
                 normal1.z = window.Normal.Z;
                 windowHole.normal = normal1;
 
-                Holes.Add(windowHole.id, windowHole);
+                Holes.Add(uniqueId, windowHole);
             }
             else
             {
-                var Test = ""; // To check window is attached to any wall or not
+                string Test = ""; // To check window is attached to any wall or not
             }
 
         }
@@ -687,12 +604,14 @@ public class LevelFormatter
         foreach (var door in Floor.Doors)
         {
             Line2D line = null;
+            string lineId = null;
             if (door.WallId != null && ObjectIdTojsonIdDictionary.ContainsKey(door.WallId))
             {
                 //if door is directly attached wall
                 if (Lines.ContainsKey(ObjectIdTojsonIdDictionary[door.WallId]))
                 {
                     line = Lines[ObjectIdTojsonIdDictionary[door.WallId]];
+                    lineId = ObjectIdTojsonIdDictionary[door.WallId];
                 }
                 else
                 {
@@ -702,13 +621,14 @@ public class LevelFormatter
                         if (door.WallId == doorwindowAssembly.ObjectId)
                         {
                             line = Lines[ObjectIdTojsonIdDictionary[doorwindowAssembly.WallId]];
-                            continue;
+                            lineId = ObjectIdTojsonIdDictionary[doorwindowAssembly.WallId];
+                            break;
                         }
                     }
                 }
                 if (line == null)
                 {
-                    var Test = ""; // To check door has wall or not
+                    string Test = ""; // To check door has wall or not
                     continue;
                 }
                 Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
@@ -716,26 +636,21 @@ public class LevelFormatter
 
 
                 Holes hole = new Holes();
-                hole.id = GenerateId();
-                hole.line = line.id;
-                Lines[hole.line].holes.Add(hole.id);
-                //hole.id = door.ObjectId.ToString().Substring(1, door.ObjectId.ToString().Length - 2); ;
+                string uniqueId = GenerateId();
+                hole.line = lineId;
+                Lines[hole.line].holes.Add(uniqueId);
                 hole.type = door.DisplayName;
-                hole.name = "door";
                 string newJson = @"{
                         ""width"": 0.18,
                         ""height"": 0.35,
                         ""altitude"": 0,
                         ""thickness"": 0.1016,
-                        ""style"":"""",
-                        ""flip"": true,
-                        ""infiltration"": true,
+                        ""style"":""""
                         }";
                 var initialJson = JObject.Parse(newJson);
                 //initialJson["altitude"] = door.StartPoint.Z;
                 initialJson["width"] = door.Width;
                 initialJson["height"] = door.Height;
-                initialJson["type"] = door.DisplayName;
                 initialJson["style"] = door.Style;
 
                 // Set the desired length value here
@@ -782,8 +697,7 @@ public class LevelFormatter
                 double offset = (GetLength(points) + (door.Width / 2)) / GetLength(wallLength);
                 if (offset > 1)
                 {
-                    /*offset = offset - (offset / GetLength(wallLength));*/
-                    var Test = "";
+                    string Test = "";
                 }
                 hole.offset = offset;
 
@@ -793,11 +707,11 @@ public class LevelFormatter
                 normal.z = door.Normal.Z;
                 hole.normal = normal;
 
-                Holes.Add(hole.id, hole);
+                Holes.Add(uniqueId, hole);
             }
             else
             {
-                var Test = ""; // To check if door has wall or not
+                string Test = ""; // To check if door has wall or not
             }
 
         }
@@ -810,32 +724,26 @@ public class LevelFormatter
                 Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
                 Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
 
-
                 Holes hole = new Holes();
-                hole.id = GenerateId();
+                string uniqueId = GenerateId();
                 hole.line = ObjectIdTojsonIdDictionary[door.WallId];
-                Lines[hole.line].holes.Add(hole.id);
-                //hole.id = door.ObjectId.ToString().Substring(1, door.ObjectId.ToString().Length - 2); ;
-                //hole.type = "door";
+                Lines[hole.line].holes.Add(uniqueId);
                 hole.type = door.DisplayName;
-                hole.name = "door";
 
                 string newJson = @"{
                         ""width"": 0.18,
                         ""height"": 0.35,
                         ""altitude"": 0,
                         ""thickness"": 0.1016,
-                        ""style"":"""",
-                        ""flip"": true,
-                        ""infiltration"": true,
+                        ""style"":""""
                         }";
                 var initialJson = JObject.Parse(newJson);
                 //initialJson["altitude"] = door.StartPoint.Z;
                 initialJson["width"] = door.Width;
                 initialJson["height"] = door.Height;
-                //initialJson["Style"] = "Opening";
+                //initialJson["style"] = "Opening";
 
-                // Set the desired length value here
+
                 string modifiedJson = initialJson.ToString();
                 hole.properties = JObject.Parse(modifiedJson);
                 Point startWindow = new Point(door.StartPoint.X, door.StartPoint.Y, 0.0);
@@ -891,11 +799,11 @@ public class LevelFormatter
                 normal.z = door.Normal.Z;
                 hole.normal = normal;
 
-                Holes.Add(hole.id, hole);
+                Holes.Add(uniqueId, hole);
             }
             else
             {
-                var Test = "";  // To check opening has wall or not
+                string Test = "";  // To check opening has wall or not
             }
 
 
@@ -905,8 +813,7 @@ public class LevelFormatter
     {
         List<string> listOfVertices = new List<string>();
         Areas area = new Areas();
-        area.id = GenerateId();
-        // area.id = spaceId;
+        string uniqueId = GenerateId();
         area.type = "area";
         area.name = "Space " + count;
 
@@ -935,7 +842,7 @@ public class LevelFormatter
         area.fluidPoint.Add("x", fluidPointArray[0]);
         area.fluidPoint.Add("y", fluidPointArray[1]);
 
-        areas.Add(area.id, area);
+        areas.Add(uniqueId, area);
     }
     public Layer MakeLayer()
     {
@@ -1157,8 +1064,7 @@ public class Normal
 #region Vertices
 public class Vertex
 {
-    public string id { get; set; }
-    public string name { get; set; }
+    public string type { get; set; }
     public double x { get; set; }
     public double y { get; set; }
     public double z { get; set; }
@@ -1173,9 +1079,7 @@ public class VertexProperties
 #region Lines
 public class Line2D
 {
-    public string id { get; set; }
     public string type { get; set; }
-    public string name { get; set; }
     public JObject properties { get; set; }
     public List<string> vertices { get; set; }
     public List<string> holes { get; set; }
@@ -1185,22 +1089,17 @@ public class Line2D
 
 }
 
-
-
 public class LineProperties
 {
     public double length { get; set; }
     public double thickness { get; set; }
     public bool userSetPartition { get; set; }
-    public MaterialProperties materialProperties { get; set; }
 }
 #endregion
 
 #region Areas
 public class Areas
 {
-
-    public string id { get; set; }
     public string type { get; set; }
     public string name { get; set; }
     public Dictionary<string, double> fluidPoint { get; set; }
@@ -1211,10 +1110,7 @@ public class Areas
 #region Holes
 public class Holes
 {
-
-    public string id { get; set; }
     public string type { get; set; }
-    public string name { get; set; }
     public JObject properties { get; set; }
     public double offset { get; set; }
     public string line { get; set; }
