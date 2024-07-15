@@ -9,12 +9,12 @@ public class Writer
 		WriteToFile(filePath, siteJson);
 	}
 
-	public string ConvertJObjectToString(JObject jObject)
+	private string ConvertJObjectToString(JObject jObject)
 	{
 		return jObject.ToString(Newtonsoft.Json.Formatting.None);
 	}
 
-	public void WriteToFile(string filePath, string text)
+	private void WriteToFile(string filePath, string text)
 	{
 		try
 		{

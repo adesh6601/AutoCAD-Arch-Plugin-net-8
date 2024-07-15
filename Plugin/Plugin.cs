@@ -70,7 +70,7 @@ namespace Plugin
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(ViewsPath) + "View.json";
+			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(ViewsPath) + ".json";
 
 			Writer.Write(SiteJson, OutputFilePath);
 

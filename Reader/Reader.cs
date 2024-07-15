@@ -12,26 +12,26 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Application;
 
 public class Reader
 {
-	public EntityConvertor Convertor = new EntityConvertor();
+	private EntityConvertor Convertor = new EntityConvertor();
 
-	public Project Project;
-	public ProjectFile ProjectFile { get; set; }
-	public ProjectFile[] ProjectFiles;
+	private Project Project;
+	private ProjectFile ProjectFile { get; set; }
+	private ProjectFile[] ProjectFiles;
 
-	public Document Document;
-	public dynamic OpenedDoc;
-	public Database Database;
+	private Document Document;
+	private dynamic OpenedDoc;
+	private Database Database;
 
-	public Transaction Txn;
-	public BlockTableRecord BlockTableRecord;
-	public StringCollection xRefs = new StringCollection();
+	private Transaction Txn;
+	private BlockTableRecord BlockTableRecord;
+	private StringCollection xRefs = new StringCollection();
 
-	public UnitsValue Unit { get; set; }
-	public double UnitConversionFactor { get; set; }
+	private UnitsValue Unit { get; set; }
+	private double UnitConversionFactor { get; set; }
 
-	public bool IsxRefFormConstruct { get; set; }
+	private bool IsxRefFormConstruct { get; set; }
 
-	public Dictionary<string, HashSet<string>> DivisionsAndLevels = new Dictionary<string, HashSet<string>>();
+	private Dictionary<string, HashSet<string>> DivisionsAndLevels = new Dictionary<string, HashSet<string>>();
 
 	public void ReadProject(ref JObject ProjectProperties, string projectPath, Entities entities)
 	{
@@ -130,7 +130,7 @@ public class Reader
 		ProjectProperties = GetProjectProperties(projectPath);
 	}
 
-	public JObject GetProjectProperties(string projectPath)
+	private JObject GetProjectProperties(string projectPath)
 	{
 		JObject projectInformation = new JObject();
 
@@ -183,7 +183,7 @@ public class Reader
 		return projectInformation;
 	}
 
-	public void SetProjectFile(string projectPath, string xRef)
+	private void SetProjectFile(string projectPath, string xRef)
 	{
 		string path = GetTructedPath(xRef);
 		string directoryPath = Path.GetDirectoryName(projectPath);
@@ -223,7 +223,7 @@ public class Reader
 		return;
 	}
 
-	public string GetTructedPath(string path)
+	private string GetTructedPath(string path)
 	{
 		int startIndex = path.IndexOf("Elements");
 
@@ -248,12 +248,12 @@ public class Reader
 		return "";
 	}
 
-	public void ReSetProjectFile()
+	private void ReSetProjectFile()
 	{
 		ProjectFile = null;
 	}
 
-	public void ReadEntitiesForProject(ProjectFile projectFile, Entities entities)
+	private void ReadEntitiesForProject(ProjectFile projectFile, Entities entities)
 	{
 		OpenFileInApp(projectFile);
 
@@ -298,7 +298,7 @@ public class Reader
 		CloseFileInApp();
 	}
 
-	public void ReadEntitiesForViews(ProjectFile projectFile, Entities entities)
+	private void ReadEntitiesForViews(ProjectFile projectFile, Entities entities)
 	{
 		DivisionsAndLevels.Clear();
 		SetDivisionsAndLevels(projectFile.FileFullPath);
@@ -348,7 +348,7 @@ public class Reader
 		CloseFileInApp();
 	}
 
-	public void OpenProject(string projectPath)
+	private void OpenProject(string projectPath)
 	{
 		try
 		{
@@ -363,17 +363,17 @@ public class Reader
 
 	}
 
-	public void SetProjectFiles()
+	private void SetProjectFiles()
 	{
 		ProjectFiles = Project.GetConstructs();
 	}
 
-	public void SetViewFiles()
+	private void SetViewFiles()
 	{
 		ProjectFiles = Project.GetViews();
 	}
 
-	public void SetDivisionsAndLevels(string filePath)
+	private void SetDivisionsAndLevels(string filePath)
 	{
 		if (!File.Exists(filePath))
 		{
@@ -419,7 +419,7 @@ public class Reader
 		DivisionsAndLevels = UpdatedDivisionsAndLevels;
 	}
 
-	public void SetXRefs(ProjectFile file)
+	private void SetXRefs(ProjectFile file)
 	{
 		if (file == null || !file.DwgExists)
 		{
@@ -449,7 +449,7 @@ public class Reader
 		}
 	}
 
-	public Database GetDbForFile(string dwgFullPath)
+	private Database GetDbForFile(string dwgFullPath)
 	{
 		DocumentCollection docs = Application.DocumentManager;
 		Document doc = null;
@@ -474,12 +474,12 @@ public class Reader
 		return db;
 	}
 
-	public bool IsSamePath(string path1, string path2)
+	private bool IsSamePath(string path1, string path2)
 	{
 		return string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase);
 	}
 
-	public void OpenFileInApp(ProjectFile file)
+	private void OpenFileInApp(ProjectFile file)
 	{
 		string dwgFullPath = file.DrawingFullPath;
 
@@ -498,7 +498,7 @@ public class Reader
 		}
 	}
 
-	public void SetDocument(ProjectFile file)
+	private void SetDocument(ProjectFile file)
 	{
 		string dwgFullPath = file.DrawingFullPath;
 
@@ -515,27 +515,27 @@ public class Reader
 		}
 	}
 
-	public void SetDatabase()
+	private void SetDatabase()
 	{
 		Database = Document.Database;
 	}
 
-	public void SetTransaction()
+	private void SetTransaction()
 	{
 		Txn = Database.TransactionManager.StartTransaction();
 	}
 
-	public void SetBlockTableRecorde()
+	private void SetBlockTableRecorde()
 	{
 		BlockTableRecord = Txn.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(Database), OpenMode.ForRead) as BlockTableRecord;
 	}
 
-	public void SetUnit()
+	private void SetUnit()
 	{
 		Unit = Database.Insunits;
 	}
 
-	public void SetUnitConversionFactor()
+	private void SetUnitConversionFactor()
 	{
 		if (Unit is UnitsValue.Inches)
 		{
@@ -562,12 +562,12 @@ public class Reader
 		}
 	}
 
-	public dynamic GetEntity(Autodesk.AutoCAD.DatabaseServices.ObjectId objectId)
+	private dynamic GetEntity(Autodesk.AutoCAD.DatabaseServices.ObjectId objectId)
 	{
 		return Txn.GetObject(objectId, OpenMode.ForRead);
 	}
 
-	public string GetEntityType(object entity)
+	private string GetEntityType(object entity)
 	{
 		if (entity is Wall) return "wall";
 
@@ -594,7 +594,7 @@ public class Reader
 		return null;
 	}
 
-	public void AddEntityPosition(string entityType, object entity)
+	private void AddEntityPosition(string entityType, object entity)
 	{
 		if (entityType == "wall")
 		{
@@ -685,7 +685,7 @@ public class Reader
 		}
 	}
 
-	public void AddEntityMaterial(object entity, string entityType, object convertedEntity)
+	private void AddEntityMaterial(object entity, string entityType, object convertedEntity)
 	{
 		if (entityType == "wall")
 		{
@@ -826,7 +826,7 @@ public class Reader
 		}
 	}
 
-	public void AddEntityStyle(object entity, string entityType, object convertedEntity)
+	private void AddEntityStyle(object entity, string entityType, object convertedEntity)
 	{
 		if (entityType == "wall")
 		{
@@ -917,7 +917,7 @@ public class Reader
 		}
 	}
 
-	public void AddEntityAnchor(object entity, ref string entityType, object convertedEntity)
+	private void AddEntityAnchor(object entity, ref string entityType, object convertedEntity)
 	{
 		if (entityType == "window")
 		{
@@ -1129,7 +1129,7 @@ public class Reader
 		}
 	}
 
-	public void AddEntityToEntites(string entityType, object convertedEntity, Entities entities)
+	private void AddEntityToEntites(string entityType, object convertedEntity, Entities entities)
 	{
 		if (entityType == "wall")
 		{
@@ -1206,12 +1206,12 @@ public class Reader
 		}
 	}
 
-	public void ResetTransaction()
+	private void ResetTransaction()
 	{
 		Txn.Commit();
 	}
 
-	public void CloseFileInApp()
+	private void CloseFileInApp()
 	{
 		OpenedDoc.Close();
 	}

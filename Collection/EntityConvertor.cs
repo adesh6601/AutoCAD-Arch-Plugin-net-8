@@ -8,7 +8,7 @@ namespace Collection
 {
 	public class EntityConvertor
 	{
-		public double UnitConversionFactor;
+		private double UnitConversionFactor;
 
 		public object ConvertEntity(object entity, string entityType, double unitConversionFactor)
 		{
@@ -122,7 +122,7 @@ namespace Collection
 			return null;
 		}
 
-		public void ConvertWall(Wall wall, Component.Wall convertedWall)
+		private void ConvertWall(Wall wall, Component.Wall convertedWall)
 		{
 			convertedWall.DisplayName = wall.DisplayName;
 
@@ -159,7 +159,7 @@ namespace Collection
 			}
 		}
 
-		public void ConvertCurtainWallLayout(CurtainWallLayout curtainWall, Component.CurtainWallLayout convertedCurtainWall)
+		private void ConvertCurtainWallLayout(CurtainWallLayout curtainWall, Component.CurtainWallLayout convertedCurtainWall)
 		{
 			convertedCurtainWall.DisplayName = curtainWall.DisplayName;
 
@@ -209,7 +209,7 @@ namespace Collection
 			}
 		}
 
-		public void ConvertCurtainWallUnit(CurtainWallUnit curtainWall, Component.CurtainWallUnit convertedCurtainWall)
+		private void ConvertCurtainWallUnit(CurtainWallUnit curtainWall, Component.CurtainWallUnit convertedCurtainWall)
 		{
 			convertedCurtainWall.DisplayName = curtainWall.DisplayName;
 
@@ -235,7 +235,7 @@ namespace Collection
 			convertedCurtainWall.CollisionType = curtainWall.CollisionType.ToString();
 		}
 
-		public void ConvertWindow(Window window, Component.Window convertedWindow)
+		private void ConvertWindow(Window window, Component.Window convertedWindow)
 		{
 			convertedWindow.DisplayName = window.DisplayName;
 
@@ -260,7 +260,7 @@ namespace Collection
 			convertedWindow.CollisionType = window.CollisionType.ToString();
 		}
 
-		public void ConvertWindowAssembly(WindowAssembly windowAssembly, Component.WindowAssembly convertedWindowAssembly)
+		private void ConvertWindowAssembly(WindowAssembly windowAssembly, Component.WindowAssembly convertedWindowAssembly)
 		{
 			convertedWindowAssembly.DisplayName = windowAssembly.DisplayName;
 
@@ -286,7 +286,7 @@ namespace Collection
 			convertedWindowAssembly.CollisionType = windowAssembly.CollisionType.ToString();
 		}
 
-		public void ConvertDoor(Door door, Component.Door convertedDoor)
+		private void ConvertDoor(Door door, Component.Door convertedDoor)
 		{
 			convertedDoor.DisplayName = door.DisplayName;
 
@@ -310,7 +310,7 @@ namespace Collection
 			convertedDoor.CollisionType = door.CollisionType.ToString();
 		}
 
-		public void ConvertOpening(Opening opening, Component.Opening convertedOpening)
+		private void ConvertOpening(Opening opening, Component.Opening convertedOpening)
 		{
 			convertedOpening.DisplayName = opening.DisplayName;
 
@@ -334,7 +334,7 @@ namespace Collection
 			convertedOpening.CollisionType = opening.CollisionType.ToString();
 		}
 
-		public void ConvertSlab(Slab slab, Component.Slab convertedSlab)
+		private void ConvertSlab(Slab slab, Component.Slab convertedSlab)
 		{
 			convertedSlab.DisplayName = slab.DisplayName;
 
@@ -393,7 +393,7 @@ namespace Collection
 			convertedSlab.SlabLoop = slabLoop;
 		}
 
-		public void ConvertRoofSlab(RoofSlab slab, Component.RoofSlab convertedSlab)
+		private void ConvertRoofSlab(RoofSlab slab, Component.RoofSlab convertedSlab)
 		{
 			convertedSlab.DisplayName = slab.DisplayName;
 
@@ -453,7 +453,7 @@ namespace Collection
 			convertedSlab.SlabLoop = slabLoop;
 		}
 
-		public void ConvertSpace(Space space, Component.Space convertedSpace)
+		private void ConvertSpace(Space space, Component.Space convertedSpace)
 		{
 			convertedSpace.DisplayName = space.DisplayName;
 
@@ -497,7 +497,7 @@ namespace Collection
 			convertedSpace.Surfaces = surface;
 		}
 
-		public void ConvertZone(Zone zone, Component.Zone convertedZone)
+		private void ConvertZone(Zone zone, Component.Zone convertedZone)
 		{
 			convertedZone.DisplayName = zone.DisplayName;
 
@@ -542,7 +542,7 @@ namespace Collection
 			wall.MaterialName = windowAssemblyAsWall.MaterialName;
 		}
 
-		public string CheckSegmentType(Wall wall)
+		private string CheckSegmentType(Wall wall)
 		{
 			Curve3d curveType = wall.BaseCurve(true);
 
