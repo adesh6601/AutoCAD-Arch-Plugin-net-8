@@ -12,8 +12,6 @@ namespace Component
 		public double HorizontalOffset { get; set; }
 		public double InteriorFaceOffset { get; set; }
 
-		// public string Material { get; set; }
-
 		public Point Normal { get; set; }
 		public double Rotation { get; set; }
 		public double Slop { get; set; }

@@ -7,14 +7,13 @@ namespace Plugin
 {
 	public class Plugin
 	{
-		public static string ProjectPath { get; set; }
+		public static string ProjectPath { get; set; } = "C:\\Users\\Adesh Lad\\Documents\\Autodesk\\My Projects\\Sample Project 2025\\Sample Project.apj";
 		public static string ViewsPath { get; set; }
 		public static string OutputFilePath { get; set; }
 
 		Reader Reader;
 		Builder Builder;
 		Formatter Formatter;
-		Writer Writer;
 
 		Entities Entities;
 		Site Site;
@@ -29,7 +28,6 @@ namespace Plugin
 			Reader = new Reader();
 			Builder = new Builder();
 			Formatter = new Formatter();
-			Writer = new Writer();
 
 			Entities = new Entities();
 			Site = new Site();
@@ -56,7 +54,6 @@ namespace Plugin
 			Reader = new Reader();
 			Builder = new Builder();
 			Formatter = new Formatter();
-			Writer = new Writer();
 
 			Entities = new Entities();
 			Site = new Site();

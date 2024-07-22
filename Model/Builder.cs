@@ -25,7 +25,7 @@ namespace Model
             AddZonesToBuilding(entities, site);
         }
 
-        private void AddCurtainWallLayoutToBuilding(Entities entities, Site site)
+        public void AddCurtainWallLayoutToBuilding(Entities entities, Site site)
         {
             foreach (CurtainWallLayout curtainWallLayout in entities.CurtainWallLayouts)
             {
@@ -51,7 +51,7 @@ namespace Model
             }
         }
 
-        private void AddCurtainWallUnitToBuilding(Entities entities, Site site)
+        public void AddCurtainWallUnitToBuilding(Entities entities, Site site)
         {
             foreach (CurtainWallUnit curtainWallUnit in entities.CurtainWallUnits)
             {
@@ -77,7 +77,7 @@ namespace Model
             }
         }
 
-        private void AddDoorsToBuilding(Entities entities, Site site)
+        public void AddDoorsToBuilding(Entities entities, Site site)
         {
             foreach (Door door in entities.Doors)
             {
@@ -103,7 +103,7 @@ namespace Model
             }
         }
 
-        private void AddOpeningsToBuilding(Entities entities, Site site)
+        public void AddOpeningsToBuilding(Entities entities, Site site)
         {
             foreach (Opening opening in entities.Openings)
             {
@@ -129,7 +129,7 @@ namespace Model
             }
         }
 
-        private void AddWallsToBuilding(Entities entities, Site site)
+        public void AddWallsToBuilding(Entities entities, Site site)
         {
             foreach (Wall wall in entities.Walls)
             {
@@ -155,7 +155,7 @@ namespace Model
             }
         }
 
-        private void AddWindowsToBuilding(Entities entities, Site site)
+        public void AddWindowsToBuilding(Entities entities, Site site)
         {
             foreach (Window window in entities.Windows)
             {
@@ -181,7 +181,7 @@ namespace Model
             }
         }
 
-        private void AddWindowAssembliesToBuilding(Entities entities, Site site)
+        public void AddWindowAssembliesToBuilding(Entities entities, Site site)
         {
             foreach (WindowAssembly windowAssembly in entities.WindowAssemblies)
             {
@@ -207,7 +207,7 @@ namespace Model
             }
         }
 
-        private void AddWindowAssembliesAsWallsToBuilding(Entities entities, Site site)
+        public void AddWindowAssembliesAsWallsToBuilding(Entities entities, Site site)
         {
             foreach (WindowAssembly windowAssembly in entities.WindowAssembliesAsWall)
             {
@@ -233,7 +233,7 @@ namespace Model
             }
         }
 
-        private void AddSlabsToBuilding(Entities entities, Site site)
+        public void AddSlabsToBuilding(Entities entities, Site site)
         {
             foreach (Slab slab in entities.Slabs)
             {
@@ -259,7 +259,7 @@ namespace Model
             }
         }
 
-        private void AddRoofSlabsToBuilding(Entities entities, Site site)
+        public void AddRoofSlabsToBuilding(Entities entities, Site site)
         {
             foreach (RoofSlab roofSlab in entities.RoofSlabs)
             {
@@ -285,7 +285,7 @@ namespace Model
             }
         }
 
-        private void AddSpacesToBuilding(Entities entities, Site site)
+        public void AddSpacesToBuilding(Entities entities, Site site)
         {
             foreach (Space space in entities.Spaces)
             {
@@ -311,7 +311,7 @@ namespace Model
             }
         }
 
-        private void AddZonesToBuilding(Entities entities, Site site)
+        public void AddZonesToBuilding(Entities entities, Site site)
         {
             foreach (Zone zone in entities.Zones)
             {

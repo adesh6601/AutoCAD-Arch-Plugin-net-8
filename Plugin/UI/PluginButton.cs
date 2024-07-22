@@ -71,14 +71,10 @@ namespace Plugin.UI
 				};
 				existingTab.Panels.Add(newPanel);
 
-				//For running in application
 				string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-				//System.Windows.MessageBox.Show(currentDirectory);
-
 				string exchangeImagePath = System.IO.Path.Combine(currentDirectory, "..\\..\\Resources\\logo2025.png");
 
-				//For running in debug mode
-				//string exchangeImagePath = System.IO.Path.GetFullPath("..\\..\\..\\resources\\logo2025.png");
+
 
 				// Create a new button
 				RibbonButton dataExtractorButton = new RibbonButton

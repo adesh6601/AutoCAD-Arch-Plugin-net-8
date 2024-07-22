@@ -5,14 +5,12 @@ public class FluidPoint
     public class PriorityQueue<TPriority, TValue>
     {
         private readonly SortedDictionary<TPriority, Queue<TValue>> _dictionary;
-        private readonly IComparer<TPriority> _comparer;
 
         public int Count { get; private set; }
 
         public PriorityQueue(IComparer<TPriority> comparer = null)
         {
             _dictionary = new SortedDictionary<TPriority, Queue<TValue>>();
-            _comparer = comparer ?? Comparer<TPriority>.Default;
             Count = 0;
         }
 
@@ -106,7 +104,6 @@ public class FluidPoint
                 while (cellQueue.Count > 0)
                 {
                     //Pick the most promising cell from the queue
-                    //Cell cell = cellQueue.Dequeue();
                     Cell cell = new Cell();
                     if (cellQueue.TryDequeue(out float queueElement, out Cell priority))
                     {

@@ -27,6 +27,7 @@ namespace Plugin.UI
 		public bool IsCloseButtonClicked { get; set; } = false;
 
 		Plugin Plugin;
+
 		public DataExtractor()
 		{
 			InitializeComponent();
@@ -44,7 +45,7 @@ namespace Plugin.UI
 				projectTextPath.IsEnabled = true;
 				projectBrowseButton.IsEnabled = false;
 				IsReadProjectEnabled = true;
-				SelectedViewPath = null;
+				SelectedViewPath = string.Empty;
 			}
 			else
 			{
@@ -141,7 +142,7 @@ namespace Plugin.UI
 
 		private void SubmitButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (OutputFolderPath != null && SelectedProjectPath != null && IsReadProjectEnabled == false)
+			if (OutputFolderPath != null && SelectedProjectPath != null && IsReadProjectEnabled)
 			{
 				Plugin = new Plugin();
 				if (viewTextPath.Text != "")
@@ -166,7 +167,7 @@ namespace Plugin.UI
 					}
 				}
 			}
-			else if (OutputFolderPath != null && SelectedProjectPath != null && IsReadProjectEnabled == true)
+			else if (OutputFolderPath != null && SelectedProjectPath != null && IsReadProjectEnabled)
 			{
 				Plugin = new Plugin();
 				Plugin.ProjectPath = SelectedProjectPath;
@@ -201,7 +202,7 @@ namespace Plugin.UI
 			projectTextPath.Text = "";
 			projectRadioButton.IsChecked = false;
 			viewsRadioButton.IsChecked = false;
-			SelectedProjectPath = null;
+			SelectedProjectPath = string.Empty;
 		}
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)

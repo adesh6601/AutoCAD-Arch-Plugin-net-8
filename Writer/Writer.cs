@@ -1,20 +1,20 @@
 ﻿using System.Reflection;
 using Newtonsoft.Json.Linq;
 
-public class Writer
+public static class Writer
 {
-	public void Write(JObject site, string filePath)
+	public static void Write(JObject site, string filePath)
 	{
 		string siteJson = ConvertJObjectToString(site);
 		WriteToFile(filePath, siteJson);
 	}
 
-	private string ConvertJObjectToString(JObject jObject)
+	private static string ConvertJObjectToString(JObject jObject)
 	{
 		return jObject.ToString(Newtonsoft.Json.Formatting.None);
 	}
 
-	private void WriteToFile(string filePath, string text)
+	private static void WriteToFile(string filePath, string text)
 	{
 		try
 		{
