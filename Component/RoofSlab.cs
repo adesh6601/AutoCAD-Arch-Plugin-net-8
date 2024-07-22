@@ -2,7 +2,7 @@
 
 namespace Component
 {
-	public class RoofSlab : ACADObject
+	public class RoofSlab : AcadObject
 	{
 		public double LowPoint { get; set; }
 		public double HighPoint { get; set; }

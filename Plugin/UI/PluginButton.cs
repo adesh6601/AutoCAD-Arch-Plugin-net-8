@@ -10,9 +10,7 @@ namespace Plugin.UI
 {
     public class PluginButton : IExtensionApplication
     {
-
-        public RibbonControl Ribbon;
-        public bool IsButtonAddedToRibbon = false;
+        private bool IsButtonAddedToRibbon = false;
 
         public void Initialize()
         {
@@ -21,12 +19,12 @@ namespace Plugin.UI
         
         private void OnApplicationIdle(object sender, EventArgs e)
         {
-            if (IsButtonAddedToRibbon == true)
+            if (IsButtonAddedToRibbon)
             {
                 Application.Idle -= OnApplicationIdle;
                 return;
             }
-            Ribbon = ComponentManager.Ribbon;
+            RibbonControl Ribbon = ComponentManager.Ribbon;
             if (Ribbon != null)
             {
                 AddRibbonTab();
@@ -41,7 +39,7 @@ namespace Plugin.UI
 
         private void AddRibbonTab()
         {
-            Ribbon = ComponentManager.Ribbon;
+            RibbonControl Ribbon = ComponentManager.Ribbon;
 
             RibbonTab existingTab = Ribbon.Tabs.FirstOrDefault(tab => tab.Title.Equals("Add-Ins", StringComparison.OrdinalIgnoreCase));
 
@@ -71,14 +69,12 @@ namespace Plugin.UI
                 };
                 existingTab.Panels.Add(newPanel);
 
-                //For running in application
-                string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                //System.Windows.MessageBox.Show(currentDirectory);
-
-                string exchangeImagePath = System.IO.Path.Combine(currentDirectory, "..\\..\\Resources\\logo2025.png");
+                //string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                //string exchangeImagePath = System.IO.Path.Combine(currentDirectory, "..\\..\\Resources\\logo2025.png");
 
                 //For running in debug mode
-                //string exchangeImagePath = System.IO.Path.GetFullPath("..\\..\\..\\resources\\logo2025.png");
+                string exchangeImagePath = System.IO.Path.GetFullPath("..\\..\\..\\resources\\logo2025.png");
+
 
                 // Create a new button
                 RibbonButton dataExtractorButton = new RibbonButton

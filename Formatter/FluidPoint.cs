@@ -5,14 +5,13 @@ public class FluidPoint
     public class PriorityQueue<TPriority, TValue>
     {
         private readonly SortedDictionary<TPriority, Queue<TValue>> _dictionary;
-        private readonly IComparer<TPriority> _comparer;
 
         public int Count { get; private set; }
 
         public PriorityQueue(IComparer<TPriority> comparer = null)
         {
             _dictionary = new SortedDictionary<TPriority, Queue<TValue>>();
-            _comparer = comparer ?? Comparer<TPriority>.Default;
+            IComparer<TPriority> _comparer = comparer ?? Comparer<TPriority>.Default;
             Count = 0;
         }
 
@@ -147,57 +146,9 @@ public class FluidPoint
             }
         }
 
-        //Signed distance from point to polygon outline (negative if point is outside)
-        private static float PointToPolygonDist(float x, float y, float[][][] polygon)
-        {
-            bool inside = false;
-            float minDistSq = float.PositiveInfinity;
+        
 
-            for (int k = 0; k < polygon.Length; k++)
-            {
-                float[][] ring = polygon[k];
-
-                for (int i = 0, len = ring.Length, j = len - 1; i < len; j = i++)
-                {
-                    float[] a = ring[i];
-                    float[] b = ring[j];
-
-                    if ((a[1] > y != b[1] > y) && (x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]))
-                        inside = !inside;
-
-                    minDistSq = Math.Min(minDistSq, GetSegDistSq(x, y, a, b));
-                }
-            }
-
-            return ((inside ? 1 : -1) * (float)Math.Sqrt(minDistSq));
-        }
-
-        //Get squared distance from a point to a segment
-        private static float GetSegDistSq(float px, float py, float[] a, float[] b)
-        {
-            float x = a[0];
-            float y = a[1];
-            float dx = b[0] - x;
-            float dy = b[1] - y;
-
-            if (!FloatEquals(dx, 0) || !FloatEquals(dy, 0))
-            {
-                float t = ((px - x) * dx + (py - y) * dy) / (dx * dx + dy * dy);
-                if (t > 1)
-                {
-                    x = b[0];
-                    y = b[1];
-                }
-                else if (t > 0)
-                {
-                    x += dx * t;
-                    y += dy * t;
-                }
-            }
-            dx = px - x;
-            dy = py - y;
-            return (dx * dx + dy * dy);
-        }
+       
 
         //Get polygon centroid
         private static Cell GetCentroidCell(float[][][] polygon)
@@ -243,7 +194,7 @@ public class FluidPoint
             return polygon;
         }
 
-        private class Cell
+        private sealed class Cell
         {
             public float X { get; private set; }
             public float Y { get; private set; }
@@ -262,6 +213,58 @@ public class FluidPoint
 
             public Cell()
             {
+            }
+
+            //Signed distance from point to polygon outline (negative if point is outside)
+            private static float PointToPolygonDist(float x, float y, float[][][] polygon)
+            {
+                bool inside = false;
+                float minDistSq = float.PositiveInfinity;
+
+                for (int k = 0; k < polygon.Length; k++)
+                {
+                    float[][] ring = polygon[k];
+
+                    for (int i = 0, len = ring.Length, j = len - 1; i < len; j = i++)
+                    {
+                        float[] a = ring[i];
+                        float[] b = ring[j];
+
+                        if ((a[1] > y != b[1] > y) && (x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]))
+                            inside = !inside;
+
+                        minDistSq = Math.Min(minDistSq, GetSegDistSq(x, y, a, b));
+                    }
+                }
+
+                return ((inside ? 1 : -1) * (float)Math.Sqrt(minDistSq));
+            }
+
+            //Get squared distance from a point to a segment
+            private static float GetSegDistSq(float px, float py, float[] a, float[] b)
+            {
+                float x = a[0];
+                float y = a[1];
+                float dx = b[0] - x;
+                float dy = b[1] - y;
+
+                if (!FloatEquals(dx, 0) || !FloatEquals(dy, 0))
+                {
+                    float t = ((px - x) * dx + (py - y) * dy) / (dx * dx + dy * dy);
+                    if (t > 1)
+                    {
+                        x = b[0];
+                        y = b[1];
+                    }
+                    else if (t > 0)
+                    {
+                        x += dx * t;
+                        y += dy * t;
+                    }
+                }
+                dx = px - x;
+                dy = py - y;
+                return (dx * dx + dy * dy);
             }
         }
 

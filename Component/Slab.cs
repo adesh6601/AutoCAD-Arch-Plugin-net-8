@@ -2,7 +2,7 @@
 
 namespace Component
 {
-	public class Slab : ACADObject
+	public class Slab : AcadObject
 	{
 		public double LowPoint { get; set; }
 		public double HighPoint { get; set; }

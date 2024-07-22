@@ -12,28 +12,43 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Application;
 
 public class Reader
 {
-	public EntityConvertor Convertor = new EntityConvertor();
 
-	public Project Project;
-	public ProjectFile ProjectFile { get; set; }
-	public ProjectFile[] ProjectFiles;
+    private EntityConvertor Convertor = new EntityConvertor();
 
-	public Document Document;
-	public dynamic OpenedDoc;
-	public Database Database;
+    private Project Project;
+    private ProjectFile ProjectFile { get; set; }
+    private ProjectFile[] ProjectFiles;
 
-	public Transaction Txn;
-	public BlockTableRecord BlockTableRecord;
-	public StringCollection xRefs = new StringCollection();
+    private Document Document;
+    private dynamic OpenedDoc;
+    private Database Database;
 
-	public UnitsValue Unit { get; set; }
-	public double UnitConversionFactor { get; set; }
+    private Transaction Txn;
+    private BlockTableRecord BlockTableRecord;
+    private StringCollection xRefs = new StringCollection();
 
-	public bool IsxRefFormConstruct { get; set; }
+    private UnitsValue Unit { get; set; }
+    private double UnitConversionFactor { get; set; }
 
-	public Dictionary<string, HashSet<string>> DivisionsAndLevels = new Dictionary<string, HashSet<string>>();
+    private bool IsxRefFormConstruct { get; set; }
 
-	public void ReadProject(ref JObject ProjectProperties, string projectPath, Entities entities)
+    private Dictionary<string, HashSet<string>> DivisionsAndLevels = new Dictionary<string, HashSet<string>>();
+
+	const string Level = "Level";
+    const string Division = "Division";
+    const string Window = "window";
+    const string WindowAssembly = "windowAssembly";
+    const string Opening = "opening";
+    const string Door = "door";
+    const string CurtainWallLayout = "curtainWallLayout";
+    const string CurtainWallUnit = "curtainWallUnit";
+    const string Slab = "slab";
+    const string RoofSlab = "roofSlab";
+    const string Space = "Space";
+    const string Zone = "zone";
+    const string Wall = "wall";
+
+    public void ReadProject(ref JObject ProjectProperties, string projectPath, Entities entities)
 	{
 		OpenProject(projectPath);
 		SetProjectFiles();
@@ -143,14 +158,14 @@ public class Reader
 		{
 			while (reader.Read())
 			{
-				if (reader.NodeType == XmlNodeType.Element && reader.Name == "Level")
+				if (reader.NodeType == XmlNodeType.Element && reader.Name == Level)
 				{
-					if (!projectInformation.ContainsKey("Level"))
+					if (!projectInformation.ContainsKey(Level))
 					{
-						projectInformation["Level"] = new JObject();
+						projectInformation[Level] = new JObject();
 					}
 
-					JObject keyValuePairs = (JObject)projectInformation["Level"];
+					JObject keyValuePairs = (JObject)projectInformation[Level];
 					JObject levelProperties = new JObject
 					{
 						["Height"] = Convert.ToString(Convert.ToInt64(reader.GetAttribute("Height")) / UnitConversionFactor),
@@ -160,14 +175,14 @@ public class Reader
 					keyValuePairs[reader.GetAttribute("Id")] = levelProperties;
 				}
 
-				if (reader.NodeType == XmlNodeType.Element && reader.Name == "Division")
+				if (reader.NodeType == XmlNodeType.Element && reader.Name == Division)
 				{
-					if (!projectInformation.ContainsKey("Division"))
+					if (!projectInformation.ContainsKey(Division))
 					{
-						projectInformation["Division"] = new JObject();
+						projectInformation[Division] = new JObject();
 					}
 
-					JObject keyValuePairs = (JObject)projectInformation["Division"];
+					JObject keyValuePairs = (JObject)projectInformation[Division];
 					JObject divisionProperties = new JObject
 					{
 						["ScheduleId"] = reader.GetAttribute("ScheduleId"),
@@ -218,9 +233,7 @@ public class Reader
 				ProjectFile = file;
 				return;
 			}
-
 		}
-		return;
 	}
 
 	public string GetTructedPath(string path)
@@ -287,7 +300,7 @@ public class Reader
 			AddEntityMaterial(entity, entityType, convertedEntity);
 			AddEntityStyle(entity, entityType, convertedEntity);
 
-			if (entityType == "opening" || entityType == "door" || entityType == "window" || entityType == "windowAssembly")
+			if (entityType == Opening || entityType == Door || entityType == Window || entityType == WindowAssembly)
 			{
 				AddEntityAnchor(entity, ref entityType, convertedEntity);
 			}
@@ -337,7 +350,7 @@ public class Reader
 			AddEntityMaterial(entity, entityType, convertedEntity);
 			AddEntityStyle(entity, entityType, convertedEntity);
 
-			if (entityType == "opening" || entityType == "door" || entityType == "window" || entityType == "windowAssembly")
+			if (entityType == Opening || entityType == Door || entityType == Window || entityType == WindowAssembly)
 			{
 				AddEntityAnchor(entity, ref entityType, convertedEntity);
 			}
@@ -389,8 +402,8 @@ public class Reader
 					continue;
 				}
 
-				string division = reader.GetAttribute("Division");
-				string level = reader.GetAttribute("Level");
+				string division = reader.GetAttribute(Division);
+				string level = reader.GetAttribute(Level);
 
 				if (!DivisionsAndLevels.ContainsKey(division))
 				{
@@ -485,7 +498,7 @@ public class Reader
 
 		try
 		{
-			dynamic acadApp = COMInterop.GetActiveAcadApp();
+			dynamic acadApp = ComInterop.GetActiveAcadApp();
 			if (System.IO.File.Exists(dwgFullPath))
 			{
 				OpenedDoc = acadApp.Documents.Open(dwgFullPath);
@@ -558,7 +571,6 @@ public class Reader
 		if (Unit is UnitsValue.Feet)
 		{
 			UnitConversionFactor = 1.0;
-			return;
 		}
 	}
 
@@ -569,34 +581,34 @@ public class Reader
 
 	public string GetEntityType(object entity)
 	{
-		if (entity is Wall) return "wall";
+		if (entity is Wall) return Wall;
 
-		if (entity is CurtainWallLayout) return "curtainWallLayout";
+		if (entity is CurtainWallLayout) return CurtainWallLayout;
 
-		if (entity is CurtainWallUnit) return "curtainWallUnit";
+		if (entity is CurtainWallUnit) return CurtainWallUnit;
 
-		if (entity is Window) return "window";
+		if (entity is Window) return Window;
 
-		if (entity is WindowAssembly) return "windowAssembly";
+		if (entity is WindowAssembly) return WindowAssembly;
 
-		if (entity is Door) return "door";
+		if (entity is Door) return Door;
 
-		if (entity is Opening) return "opening";
+		if (entity is Opening) return Opening;
 
-		if (entity is Slab) return "slab";
+		if (entity is Slab) return Slab;
 
-		if (entity is RoofSlab) return "roofSlab";
+		if (entity is RoofSlab) return RoofSlab;
 
-		if (entity is Space) return "space";
+		if (entity is Space) return Space;
 
-		if (entity is Zone) return "zone";
+		if (entity is Zone) return Zone;
 
 		return null;
 	}
 
 	public void AddEntityPosition(string entityType, object entity)
 	{
-		if (entityType == "wall")
+		if (entityType == Wall)
 		{
 			Component.Wall wall = (Component.Wall)entity;
 			wall.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -604,7 +616,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "curtainWallLayout")
+		if (entityType == CurtainWallLayout)
 		{
 			Component.CurtainWallLayout curtainWall = (Component.CurtainWallLayout)entity;
 			curtainWall.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -612,7 +624,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "curtainWallUnit")
+		if (entityType == CurtainWallUnit)
 		{
 			Component.CurtainWallUnit curtainWallUnit = (Component.CurtainWallUnit)entity;
 			curtainWallUnit.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -620,7 +632,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "window")
+		if (entityType == Window)
 		{
 			Component.Window window = (Component.Window)entity;
 			window.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -628,7 +640,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "windowAssembly")
+		if (entityType == WindowAssembly)
 		{
 			Component.WindowAssembly windowAssembly = (Component.WindowAssembly)entity;
 			windowAssembly.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -636,7 +648,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "door")
+		if (entityType == Door)
 		{
 			Component.Door door = (Component.Door)entity;
 			door.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -644,7 +656,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "opening")
+		if (entityType == Opening)
 		{
 			Component.Opening opening = (Component.Opening)entity;
 			opening.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -652,7 +664,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "slab")
+		if (entityType == Slab)
 		{
 			Component.Slab slab = (Component.Slab)entity;
 			slab.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -660,7 +672,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "roofSlab")
+		if (entityType == RoofSlab)
 		{
 			Component.RoofSlab roofSlab = (Component.RoofSlab)entity;
 			roofSlab.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -668,7 +680,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "space")
+		if (entityType == Space)
 		{
 			Component.Space space = (Component.Space)entity;
 			space.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
@@ -676,18 +688,17 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "zone")
+		if (entityType == Zone)
 		{
 			Component.Zone zone = (Component.Zone)entity;
 			zone.DivisionsAndLevels = new Dictionary<string, HashSet<string>>(DivisionsAndLevels);
 
-			return;
 		}
 	}
 
 	public void AddEntityMaterial(object entity, string entityType, object convertedEntity)
 	{
-		if (entityType == "wall")
+		if (entityType == Wall)
 		{
 			Wall wall = (Wall)entity;
 			Component.Wall convertedWall = (Component.Wall)convertedEntity;
@@ -696,21 +707,10 @@ public class Reader
 
 			convertedWall.MaterialName = material.Name;
 
-			// convertedWall.Ambient = material.Ambient;
-			// convertedWall.ColorBleedScale = material.ColorBleedScale;
-			// convertedWall.IndirectBumpScale = material.IndirectBumpScale;
-			// convertedWall.Luminance = material.Luminance;
-			// convertedWall.ReflectanceScale = material.ReflectanceScale;
-			// convertedWall.Reflectivity = material.Reflectivity;
-			// convertedWall.SelfIllumination = material.SelfIllumination;
-			// convertedWall.Translucence = material.Translucence;
-			// convertedWall.TransmittanceScale = material.TransmittanceScale;
-			// convertedWall.TwoSided = material.TwoSided;
-
 			return;
 		}
 
-		if (entityType == "curtainWallLayout")
+		if (entityType == CurtainWallLayout)
 		{
 			CurtainWallLayout curtainWallLayout = (CurtainWallLayout)entity;
 			Component.CurtainWallLayout convertedCurtainWall = (Component.CurtainWallLayout)convertedEntity;
@@ -719,21 +719,10 @@ public class Reader
 
 			convertedCurtainWall.MaterialName = material.Name;
 
-			// convertedCurtainWall.Ambient = material.Ambient;
-			// convertedCurtainWall.ColorBleedScale = material.ColorBleedScale;
-			// convertedCurtainWall.IndirectBumpScale = material.IndirectBumpScale;
-			// convertedCurtainWall.Luminance = material.Luminance;
-			// convertedCurtainWall.ReflectanceScale = material.ReflectanceScale;
-			// convertedCurtainWall.Reflectivity = material.Reflectivity;
-			// convertedCurtainWall.SelfIllumination = material.SelfIllumination;
-			// convertedCurtainWall.Translucence = material.Translucence;
-			// convertedCurtainWall.TransmittanceScale = material.TransmittanceScale;
-			// convertedCurtainWall.TwoSided = material.TwoSided;
-
 			return;
 		}
 
-		if (entityType == "curtainWallUnit")
+		if (entityType == CurtainWallUnit)
 		{
 			CurtainWallUnit curtainWallLayout = (CurtainWallUnit)entity;
 			Component.CurtainWallUnit convertedCurtainWallUnit = (Component.CurtainWallUnit)convertedEntity;
@@ -742,21 +731,10 @@ public class Reader
 
 			convertedCurtainWallUnit.MaterialName = material.Name;
 
-			// convertedCurtainWallUnit.Ambient = material.Ambient;
-			// convertedCurtainWallUnit.ColorBleedScale = material.ColorBleedScale;
-			// convertedCurtainWallUnit.IndirectBumpScale = material.IndirectBumpScale;
-			// convertedCurtainWallUnit.Luminance = material.Luminance;
-			// convertedCurtainWallUnit.ReflectanceScale = material.ReflectanceScale;
-			// convertedCurtainWallUnit.Reflectivity = material.Reflectivity;
-			// convertedCurtainWallUnit.SelfIllumination = material.SelfIllumination;
-			// convertedCurtainWallUnit.Translucence = material.Translucence;
-			// convertedCurtainWallUnit.TransmittanceScale = material.TransmittanceScale;
-			// convertedCurtainWallUnit.TwoSided = material.TwoSided;
-
 			return;
 		}
 
-		if (entityType == "window")
+		if (entityType == Window)
 		{
 			Window window = (Window)entity;
 			Component.Window convertedWindow = (Component.Window)convertedEntity;
@@ -765,21 +743,10 @@ public class Reader
 
 			convertedWindow.MaterialName = material.Name;
 
-			// convertedWindow.Ambient = material.Ambient;
-			// convertedWindow.ColorBleedScale = material.ColorBleedScale;
-			// convertedWindow.IndirectBumpScale = material.IndirectBumpScale;
-			// convertedWindow.Luminance = material.Luminance;
-			// convertedWindow.ReflectanceScale = material.ReflectanceScale;
-			// convertedWindow.Reflectivity = material.Reflectivity;
-			// convertedWindow.SelfIllumination = material.SelfIllumination;
-			// convertedWindow.Translucence = material.Translucence;
-			// convertedWindow.TransmittanceScale = material.TransmittanceScale;
-			// convertedWindow.TwoSided = material.TwoSided;
-
 			return;
 		}
 
-		if (entityType == "windowAssembly")
+		if (entityType == WindowAssembly)
 		{
 			WindowAssembly windowAssembly = (WindowAssembly)entity;
 			Component.WindowAssembly convertedWindowAssembly = (Component.WindowAssembly)convertedEntity;
@@ -788,21 +755,10 @@ public class Reader
 
 			convertedWindowAssembly.MaterialName = material.Name;
 
-			// convertedWindowAssembly.Ambient = material.Ambient;
-			// convertedWindowAssembly.ColorBleedScale = material.ColorBleedScale;
-			// convertedWindowAssembly.IndirectBumpScale = material.IndirectBumpScale;
-			// convertedWindowAssembly.Luminance = material.Luminance;
-			// convertedWindowAssembly.ReflectanceScale = material.ReflectanceScale;
-			// convertedWindowAssembly.Reflectivity = material.Reflectivity;
-			// convertedWindowAssembly.SelfIllumination = material.SelfIllumination;
-			// convertedWindowAssembly.Translucence = material.Translucence;
-			// convertedWindowAssembly.TransmittanceScale = material.TransmittanceScale;
-			// convertedWindowAssembly.TwoSided = material.TwoSided;
-
 			return;
 		}
 
-		if (entityType == "door")
+		if (entityType == Door)
 		{
 			Door door = (Door)entity;
 			Component.Door convertedDoor = (Component.Door)convertedEntity;
@@ -810,25 +766,12 @@ public class Reader
 			Material material = Txn.GetObject(door.MaterialId, OpenMode.ForRead) as Material;
 
 			convertedDoor.MaterialName = material.Name;
-
-			// convertedDoor.Ambient = material.Ambient;
-			// convertedDoor.ColorBleedScale = material.ColorBleedScale;
-			// convertedDoor.IndirectBumpScale = material.IndirectBumpScale;
-			// convertedDoor.Luminance = material.Luminance;
-			// convertedDoor.ReflectanceScale = material.ReflectanceScale;
-			// convertedDoor.Reflectivity = material.Reflectivity;
-			// convertedDoor.SelfIllumination = material.SelfIllumination;
-			// convertedDoor.Translucence = material.Translucence;
-			// convertedDoor.TransmittanceScale = material.TransmittanceScale;
-			// convertedDoor.TwoSided = material.TwoSided;
-
-			return;
 		}
 	}
 
 	public void AddEntityStyle(object entity, string entityType, object convertedEntity)
 	{
-		if (entityType == "wall")
+		if (entityType == Wall)
 		{
 			Wall wall = (Wall)entity;
 			Component.Wall convertedWall = (Component.Wall)convertedEntity;
@@ -839,7 +782,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "curtainWallLayout")
+		if (entityType == CurtainWallLayout)
 		{
 			CurtainWallLayout curtainWallLayout = (CurtainWallLayout)entity;
 			Component.CurtainWallLayout convertedCurtainWallLayout = (Component.CurtainWallLayout)convertedEntity;
@@ -850,7 +793,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "curtainWallUnit")
+		if (entityType == CurtainWallUnit)
 		{
 			CurtainWallUnit curtainWallUnit = (CurtainWallUnit)entity;
 			Component.CurtainWallUnit convertedCurtainWallUnit = (Component.CurtainWallUnit)convertedEntity;
@@ -861,7 +804,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "window")
+		if (entityType == Window)
 		{
 			Window window = (Window)entity;
 			Component.Window convertedWindow = (Component.Window)convertedEntity;
@@ -872,7 +815,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "windowAssembly")
+		if (entityType == WindowAssembly)
 		{
 			WindowAssembly windowAssembly = (WindowAssembly)entity;
 			Component.WindowAssembly convertedWindowAssembly = (Component.WindowAssembly)convertedEntity;
@@ -883,7 +826,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "door")
+		if (entityType == Door)
 		{
 			Door door = (Door)entity;
 			Component.Door convertedDoor = (Component.Door)convertedEntity;
@@ -894,7 +837,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "slab")
+		if (entityType == Slab)
 		{
 			Slab slab = (Slab)entity;
 			Component.Slab convertedSlab = (Component.Slab)convertedEntity;
@@ -905,7 +848,7 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "roofSlab")
+		if (entityType == RoofSlab)
 		{
 			RoofSlab roofSlab = (RoofSlab)entity;
 			Component.RoofSlab convertedRoofSlab = (Component.RoofSlab)convertedEntity;
@@ -913,13 +856,12 @@ public class Reader
 			RoofSlabStyle roofSlabStyle = Txn.GetObject(roofSlab.StyleId, OpenMode.ForRead) as RoofSlabStyle;
 			convertedRoofSlab.Style = roofSlabStyle.Name;
 
-			return;
 		}
 	}
 
 	public void AddEntityAnchor(object entity, ref string entityType, object convertedEntity)
 	{
-		if (entityType == "window")
+		if (entityType == Window)
 		{
 			Window window = (Window)entity;
 			Component.Window convertedWindow = (Component.Window)convertedEntity;
@@ -931,7 +873,7 @@ public class Reader
 				anchorObject = Txn.GetObject(window.AnchorId, OpenMode.ForRead);
 			}
 
-			if (anchorObject != null && anchorObject is AnchorEntityToGridAssembly)
+			if (anchorObject is AnchorEntityToGridAssembly)
 			{
 				AnchorEntityToGridAssembly anchorEntity = (AnchorEntityToGridAssembly)Txn.GetObject(window.AnchorId, OpenMode.ForRead);
 
@@ -944,7 +886,7 @@ public class Reader
 				}
 			}
 
-			else if (anchorObject != null && anchorObject is AnchorEntityToWall)
+			else if (anchorObject is AnchorEntityToWall)
 			{
 				AnchorEntityToWall anchorEntity = (AnchorEntityToWall)Txn.GetObject(window.AnchorId, OpenMode.ForRead);
 				AnchorOpeningBaseToWall anchorToWall = null;
@@ -962,16 +904,9 @@ public class Reader
 					}
 				}
 			}
-
-			else
-			{
-				var test = ""; //window is not attached to any wall
-			}
-
-			return;
 		}
 
-		if (entityType == "door")
+		if (entityType == Door)
 		{
 			Door door = (Door)entity;
 			Component.Door convertedDoor = (Component.Door)convertedEntity;
@@ -983,7 +918,7 @@ public class Reader
 				anchorObject = Txn.GetObject(door.AnchorId, OpenMode.ForRead);
 			}
 
-			if (anchorObject != null && anchorObject is AnchorEntityToGridAssembly)
+			if (anchorObject is AnchorEntityToGridAssembly)
 			{
 				AnchorEntityToGridAssembly anchorEntity = (AnchorEntityToGridAssembly)Txn.GetObject(door.AnchorId, OpenMode.ForRead);
 
@@ -996,7 +931,7 @@ public class Reader
 				}
 			}
 
-			else if (anchorObject != null && anchorObject is AnchorEntityToWall)
+			else if (anchorObject is AnchorEntityToWall)
 			{
 				AnchorEntityToWall anchorEntity = (AnchorEntityToWall)Txn.GetObject(door.AnchorId, OpenMode.ForRead);
 				AnchorOpeningBaseToWall anchorToWall = null;
@@ -1015,15 +950,10 @@ public class Reader
 				}
 			}
 
-			else
-			{
-				var test = ""; //door is not attached to any wall
-			}
-
 			return;
 		}
 
-		if (entityType == "opening")
+		if (entityType == Opening)
 		{
 			Opening opening = (Opening)entity;
 			Component.Opening convertedOpening = (Component.Opening)convertedEntity;
@@ -1035,7 +965,7 @@ public class Reader
 				anchorObject = Txn.GetObject(opening.AnchorId, OpenMode.ForRead);
 			}
 
-			if (anchorObject != null && anchorObject is AnchorEntityToGridAssembly)
+			if (anchorObject is AnchorEntityToGridAssembly)
 			{
 				AnchorEntityToGridAssembly anchorEntity = (AnchorEntityToGridAssembly)Txn.GetObject(opening.AnchorId, OpenMode.ForRead);
 
@@ -1049,7 +979,7 @@ public class Reader
 				}
 			}
 
-			else if (anchorObject != null && anchorObject is AnchorEntityToWall)
+			else if (anchorObject is AnchorEntityToWall)
 			{
 				AnchorEntityToWall anchorEntity = (AnchorEntityToWall)Txn.GetObject(opening.AnchorId, OpenMode.ForRead);
 				AnchorOpeningBaseToWall anchorToWall = null;
@@ -1068,15 +998,10 @@ public class Reader
 				}
 			}
 
-			else
-			{
-				var test = ""; //opening is not attached to any wall
-			}
-
 			return;
 		}
 
-		if (entityType == "windowAssembly")
+		if (entityType == WindowAssembly)
 		{
 			WindowAssembly windowAssembly = (WindowAssembly)entity;
 			Component.WindowAssembly convertedWindowAssembly = (Component.WindowAssembly)convertedEntity;
@@ -1088,7 +1013,7 @@ public class Reader
 				anchorObject = Txn.GetObject(windowAssembly.AnchorId, OpenMode.ForRead);
 			}
 
-			if (anchorObject != null && anchorObject is AnchorEntityToGridAssembly)
+			if (anchorObject is AnchorEntityToGridAssembly)
 			{
 				AnchorEntityToGridAssembly anchorEntity = (AnchorEntityToGridAssembly)Txn.GetObject(windowAssembly.AnchorId, OpenMode.ForRead);
 
@@ -1101,7 +1026,7 @@ public class Reader
 				}
 			}
 
-			else if (anchorObject != null && anchorObject is AnchorEntityToWall)
+			else if (anchorObject is AnchorEntityToWall)
 			{
 				AnchorEntityToWall anchorEntity = (AnchorEntityToWall)Txn.GetObject(windowAssembly.AnchorId, OpenMode.ForRead);
 				AnchorOpeningBaseToWall anchorToWall = null;
@@ -1119,43 +1044,41 @@ public class Reader
 					}
 				}
 			}
-
 			else if (anchorObject == null)
 			{
 				entityType = "windowAssemblyAsWall";
 			}
 
-			return;
 		}
 	}
 
 	public void AddEntityToEntites(string entityType, object convertedEntity, Entities entities)
 	{
-		if (entityType == "wall")
+		if (entityType == Wall)
 		{
 			entities.Walls.Add((Component.Wall)convertedEntity);
 			return;
 		}
 
-		if (entityType == "curtainWallLayout")
+		if (entityType == CurtainWallLayout)
 		{
 			entities.CurtainWallLayouts.Add((Component.CurtainWallLayout)convertedEntity);
 			return;
 		}
 
-		if (entityType == "curtainWallUnit")
+		if (entityType == CurtainWallUnit)
 		{
 			entities.CurtainWallUnits.Add((Component.CurtainWallUnit)convertedEntity);
 			return;
 		}
 
-		if (entityType == "window")
+		if (entityType == Window)
 		{
 			entities.Windows.Add((Component.Window)convertedEntity);
 			return;
 		}
 
-		if (entityType == "windowAssembly")
+		if (entityType == WindowAssembly)
 		{
 			entities.WindowAssemblies.Add((Component.WindowAssembly)convertedEntity);
 			return;
@@ -1169,40 +1092,39 @@ public class Reader
 			return;
 		}
 
-		if (entityType == "door")
+		if (entityType == Door)
 		{
 			entities.Doors.Add((Component.Door)convertedEntity);
 			return;
 		}
 
-		if (entityType == "opening")
+		if (entityType == Opening)
 		{
 			entities.Openings.Add((Component.Opening)convertedEntity);
 			return;
 		}
 
-		if (entityType == "space")
+		if (entityType == Space)
 		{
 			entities.Spaces.Add((Component.Space)convertedEntity);
 			return;
 		}
 
-		if (entityType == "slab")
+		if (entityType == Slab)
 		{
 			entities.Slabs.Add((Component.Slab)convertedEntity);
 			return;
 		}
 
-		if (entityType == "roofSlab")
+		if (entityType == RoofSlab)
 		{
 			entities.RoofSlabs.Add((Component.RoofSlab)convertedEntity);
 			return;
 		}
 
-		if (entityType == "zone")
+		if (entityType == Zone)
 		{
 			entities.Zones.Add((Component.Zone)convertedEntity);
-			return;
 		}
 	}
 

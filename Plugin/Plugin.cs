@@ -11,31 +11,19 @@ namespace Plugin
 		public static string ViewsPath { get; set; }
 		public static string OutputFilePath { get; set; }
 
-		Reader Reader;
-		Builder Builder;
-		Formatter Formatter;
-		Writer Writer;
-
-		Entities Entities;
-		Site Site;
-
-		JObject SiteJson;
-		JObject ProjectProperties;
-
-
 		[CommandMethod("InitiateReadProject")]
 		public void InitiateReadProject()
 		{
-			Reader = new Reader();
-			Builder = new Builder();
-			Formatter = new Formatter();
-			Writer = new Writer();
+            Reader Reader = new Reader();
+            Builder Builder = new Builder();
+            Formatter Formatter = new Formatter();
+            Writer Writer = new Writer();
 
-			Entities = new Entities();
-			Site = new Site();
+            Entities Entities = new Entities();
+            Site Site = new Site();
 
-			SiteJson = new JObject();
-			ProjectProperties = new JObject();
+            JObject SiteJson = new JObject();
+            JObject ProjectProperties = new JObject();
 
 			Reader.ReadProject(ref ProjectProperties, ProjectPath, Entities);
 
@@ -53,18 +41,18 @@ namespace Plugin
 		[CommandMethod("InitiateReadView")]
 		public void InitiateReadView()
 		{
-			Reader = new Reader();
-			Builder = new Builder();
-			Formatter = new Formatter();
-			Writer = new Writer();
+            Reader Reader = new Reader();
+            Builder Builder = new Builder();
+            Formatter Formatter = new Formatter();
+            Writer Writer = new Writer();
 
-			Entities = new Entities();
-			Site = new Site();
+            Entities Entities = new Entities();
+            Site Site = new Site();
 
-			SiteJson = new JObject();
-			ProjectProperties = new JObject();
+            JObject SiteJson = new JObject();
+            JObject ProjectProperties = new JObject();
 
-			Reader.ReadViews(ref ProjectProperties, ProjectPath, ViewsPath, Entities);
+            Reader.ReadViews(ref ProjectProperties, ProjectPath, ViewsPath, Entities);
 
 			Builder.Build(Entities, Site);
 

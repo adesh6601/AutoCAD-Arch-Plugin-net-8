@@ -1,6 +1,6 @@
 ﻿namespace Component
 {
-	public class Opening : ACADObject
+	public class Opening : AcadObject
 	{
 		public string ShapeType { get; set; }
 		public string LineTypeID { get; set; }

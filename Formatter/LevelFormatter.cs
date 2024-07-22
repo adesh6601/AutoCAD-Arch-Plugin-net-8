@@ -6,7 +6,7 @@ using Model;
 
 public class LevelFormatter
 {
-    Dictionary<string, bool> UniqueIds = new Dictionary<string, bool>();
+    readonly Dictionary<string, bool>  UniqueIds = new Dictionary<string, bool>();
     Dictionary<int, Point> UniqueVerticesDictionary = new Dictionary<int, Point>();
     Dictionary<string, string> ObjectIdTojsonIdDictionary = new Dictionary<string, string>();
     Dictionary<string, Vertex> Vertices = new Dictionary<string, Vertex>();
@@ -17,9 +17,16 @@ public class LevelFormatter
     Dictionary<string, RoofSlab> RoofSlabs = new Dictionary<string, RoofSlab>();
     Dictionary<string, Areas> areas = new Dictionary<string, Areas>();
 
-    public Dictionary<string, Layer> layers = new Dictionary<string, Layer>();
-    public Model.Floor Floor;
+    private Dictionary<string, Layer> layers = new Dictionary<string, Layer>();
 
+    public Dictionary<string, Layer> Layers
+    {
+        get { return layers; }
+        set { layers = value; }
+    }
+    private Model.Floor Floor;
+
+    const string Vertex = "Vertex";
     public LevelFormatter(Model.Floor floor)
     {
         this.Floor = floor;
@@ -55,9 +62,9 @@ public class LevelFormatter
     }
     public bool IsUniquePoint(Point InPoint, Dictionary<int, Point> uniqueVertices)
     {
-        foreach (var Point in uniqueVertices)
+        foreach (var Point in uniqueVertices.Values)
         {
-            if (Math.Abs(Point.Value.X - InPoint.X) <= 0.1 && Math.Abs(Point.Value.Y - InPoint.Y) <= 0.1)
+            if (Math.Abs(Point.X - InPoint.X) <= 0.1 && Math.Abs(Point.Y - InPoint.Y) <= 0.1)
             { return false; }
         }
         return true;
@@ -100,7 +107,6 @@ public class LevelFormatter
             if (Math.Abs(vertex.Value.x - inLine[1].X) < 0.1 && Math.Abs(vertex.Value.y - inLine[1].Y) < 0.1)
             {
                 vertexList.Add(vertex.Key);
-                continue;
             }
 
         }
@@ -140,13 +146,13 @@ public class LevelFormatter
         {
             Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
             Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
-            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) && addUniqueVertex == 1)
             {
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
                 IndexOfUniqueVertces++;
                 var startVertex = new Vertex();
                 string uniqueId = GenerateId();
-                startVertex.type = "Vertex";
+                startVertex.type = Vertex;
                 startVertex.x = pair.StartPoint.X;
                 startVertex.y = pair.StartPoint.Y;
                 startVertex.Lines = new List<string>();
@@ -154,14 +160,14 @@ public class LevelFormatter
                 Vertices.Add(uniqueId, startVertex);
 
             }
-            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) && addUniqueVertex == 1)
             {
 
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
                 IndexOfUniqueVertces++;
                 var endVertex = new Vertex();
                 string uniqueId = GenerateId();
-                endVertex.type = "Vertex";
+                endVertex.type = Vertex;
                 endVertex.x = pair.EndPoint.X;
                 endVertex.y = pair.EndPoint.Y;
                 endVertex.Lines = new List<string>();
@@ -176,13 +182,13 @@ public class LevelFormatter
         {
             Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
             Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
-            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) && addUniqueVertex == 1)
             {
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
                 IndexOfUniqueVertces++;
                 var startVertex = new Vertex();
                 string uniqueId = GenerateId();
-                startVertex.type = "Vertex";
+                startVertex.type = Vertex;
                 startVertex.x = pair.StartPoint.X;
                 startVertex.y = pair.StartPoint.Y;
                 startVertex.Lines = new List<string>();
@@ -190,7 +196,7 @@ public class LevelFormatter
                 Vertices.Add(uniqueId, startVertex);
 
             }
-            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) && addUniqueVertex == 1)
             {
 
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
@@ -198,7 +204,7 @@ public class LevelFormatter
 
                 var endVertex = new Vertex();
                 string uniqueId = GenerateId();
-                endVertex.type = "Vertex";
+                endVertex.type = Vertex;
                 endVertex.x = pair.EndPoint.X;
                 endVertex.y = pair.EndPoint.Y;
                 endVertex.Lines = new List<string>();
@@ -213,13 +219,13 @@ public class LevelFormatter
         {
             Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
             Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
-            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) && addUniqueVertex == 1)
             {
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
                 IndexOfUniqueVertces++;
                 var startVertex = new Vertex();
                 string uniqueId = GenerateId();
-                startVertex.type = "Vertex";
+                startVertex.type = Vertex;
                 startVertex.x = pair.StartPoint.X;
                 startVertex.y = pair.StartPoint.Y;
                 startVertex.Lines = new List<string>();
@@ -227,13 +233,13 @@ public class LevelFormatter
                 Vertices.Add(uniqueId, startVertex);
 
             }
-            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) && addUniqueVertex == 1)
             {
                 UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
                 IndexOfUniqueVertces++;
                 var endVertex = new Vertex();
                 string uniqueId = GenerateId();
-                endVertex.type = "Vertex";
+                endVertex.type = Vertex;
                 endVertex.x = pair.EndPoint.X;
                 endVertex.y = pair.EndPoint.Y;
                 endVertex.Lines = new List<string>();
@@ -291,10 +297,7 @@ public class LevelFormatter
                     }
                 }
             }
-            else
-            {
-                string test = ""; //To check any line which don't contains two vertices
-            }
+
 
         }
 
@@ -341,10 +344,7 @@ public class LevelFormatter
                     }
                 }
             }
-            else
-            {
-                string Test = "";  //To check any line which don't contain two vertices
-            }
+
         }
 
         foreach (var line in Floor.CurtainWallUnits)
@@ -391,10 +391,7 @@ public class LevelFormatter
                     }
                 }
             }
-            else
-            {
-                string Test = ""; //To check any line which don't contain two vertices
-            }
+
         }
 
     }
@@ -476,10 +473,6 @@ public class LevelFormatter
                 //double offset = (GetLength(points) + (window.Width / 2)) / GetLength(wallLength);
                 double offset = (GetLength(points)) / GetLength(wallLength);
 
-                if (offset > 1)
-                {
-                    var Test = "";
-                }
                 windowHole.offset = offset;
 
                 Normal normal1 = new Normal();
@@ -491,10 +484,7 @@ public class LevelFormatter
                 if (!ObjectIdTojsonIdDictionary.ContainsKey(window.ObjectId.ToString())) { ObjectIdTojsonIdDictionary.Add(window.ObjectId.ToString(), uniqueId); }
                 Holes.Add(uniqueId, windowHole);
             }
-            else
-            {
-                string Test = ""; // To check windowAssembly has a wall or Not
-            }
+
 
 
         }
@@ -528,9 +518,6 @@ public class LevelFormatter
                 initialJson["width"] = window.Width;
                 initialJson["height"] = window.Height;
                 initialJson["style"] = window.Style;
-                /*                    initialJson["FrameWidth"] = window.FrameWidth;
-                                    initialJson["FrameDepth"] = window.FrameDepth;
-                                    initialJson["GlassThickness"] = window.GlassThickness;*/
                 initialJson["altitude"] = window.StartPoint.Z;
 
                 string modifiedJson = initialJson.ToString();
@@ -579,11 +566,6 @@ public class LevelFormatter
                 double offset = (GetLength(points) + (window.Width / 2)) / GetLength(wallLength);
                 //double offset = (GetLength(points)) / GetLength(wallLength);
 
-                if (offset > 1)
-                {
-                    var Test = ""; // To Check if Offset is Greater then one
-                }
-
                 windowHole.offset = offset;
 
                 Normal normal1 = new Normal();
@@ -594,11 +576,6 @@ public class LevelFormatter
 
                 Holes.Add(uniqueId, windowHole);
             }
-            else
-            {
-                string Test = ""; // To check window is attached to any wall or not
-            }
-
         }
 
         foreach (var door in Floor.Doors)
@@ -628,7 +605,7 @@ public class LevelFormatter
                 }
                 if (line == null)
                 {
-                    string Test = ""; // To check door has wall or not
+                // To check door has wall or not
                     continue;
                 }
                 Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
@@ -695,10 +672,6 @@ public class LevelFormatter
                 wallLength.Add(point1);
 
                 double offset = (GetLength(points) + (door.Width / 2)) / GetLength(wallLength);
-                if (offset > 1)
-                {
-                    string Test = "";
-                }
                 hole.offset = offset;
 
                 Normal normal = new Normal();
@@ -709,11 +682,6 @@ public class LevelFormatter
 
                 Holes.Add(uniqueId, hole);
             }
-            else
-            {
-                string Test = ""; // To check if door has wall or not
-            }
-
         }
 
         foreach (var door in Floor.Openings)
@@ -738,11 +706,9 @@ public class LevelFormatter
                         ""style"":""""
                         }";
                 var initialJson = JObject.Parse(newJson);
-                //initialJson["altitude"] = door.StartPoint.Z;
                 initialJson["width"] = door.Width;
                 initialJson["height"] = door.Height;
-                //initialJson["style"] = "Opening";
-
+                initialJson["style"] = "Opening";
 
                 string modifiedJson = initialJson.ToString();
                 hole.properties = JObject.Parse(modifiedJson);
@@ -786,11 +752,6 @@ public class LevelFormatter
 
                 double offset = (GetLength(points) + (door.Width / 2)) / GetLength(wallLength);
                 //double offset = (GetLength(points)) / GetLength(wallLength);
-                if (offset > 1)
-                {
-                    /*offset = offset - (offset / GetLength(wallLength));*/
-                    var Test = "";
-                }
                 hole.offset = offset;
 
                 Normal normal = new Normal();
@@ -801,17 +762,11 @@ public class LevelFormatter
 
                 Holes.Add(uniqueId, hole);
             }
-            else
-            {
-                string Test = "";  // To check opening has wall or not
-            }
-
 
         }
     }
     public void MakeArea(List<List<double>> vertices, int count, string spaceId)
     {
-        List<string> listOfVertices = new List<string>();
         Areas area = new Areas();
         string uniqueId = GenerateId();
         area.type = "area";
@@ -829,8 +784,6 @@ public class LevelFormatter
             Point point = new Point(vertex[0], vertex[1], 0.0);
             verticeOfPolygoan.Add(point);
         }
-
-        double areaOfPolygoan = PolygonArea(verticeOfArea);
 
         if (verticeOfArea.Count != 0) { verticeOfArea.RemoveAt(verticeOfArea.Count - 1); }
 
@@ -1071,9 +1024,6 @@ public class Vertex
     public List<string> Lines { get; set; }
 }
 
-public class VertexProperties
-{
-}
 #endregion
 
 #region Lines
@@ -1123,11 +1073,7 @@ public class Holes
     public Point endPoint { get; set; }
 }
 
-public class HoleProperties
-{
-}
-
-public class DoorProperties : HoleProperties
+public class DoorProperties 
 {
     public double width { get; set; }
     public double height { get; set; }
@@ -1137,7 +1083,7 @@ public class DoorProperties : HoleProperties
     public bool infiltration { get; set; }
 }
 
-public class WindowProperties : HoleProperties
+public class WindowProperties 
 {
     public double width { get; set; }
     public double height { get; set; }
@@ -1171,26 +1117,26 @@ public class RoofSlab
 #region Material Properties
 public class MaterialProperties
 {
-    public string materialAssembly;
-    public double total_Thickness;
-    public double uValue;
-    public string uValueUnit = "Btu/(hr-ft²-°F)";
-    public double transmissivity;
-    public double absorptivity;
-    public string thicknessUnit = "in";
+    private string materialAssembly;
+    private double total_Thickness;
+    private double uValue;
+    private string uValueUnit = "Btu/(hr-ft²-°F)";
+    private double transmissivity;
+    private double absorptivity;
+    private string thicknessUnit = "in";
 }
 
 public class RoofCeilingMaterialProperties : MaterialProperties
 {
-    public double uValueSolarLoad;
-    public double colorAdjustmentFactor;
-    public double f;
+    private double uValueSolarLoad;
+    private double colorAdjustmentFactor;
+    private double f;
 }
 
 public class GlassMaterialProperties : MaterialProperties
 {
-    public double shadingCoefficient;
-    public List<int> color;
+    private double shadingCoefficient;
+    private List<int> color;
 }
 
 #endregion

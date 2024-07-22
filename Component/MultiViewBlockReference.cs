@@ -1,6 +1,6 @@
 ﻿namespace Component
 {
-    public class MultiViewBlockReference : ACADObject
+    public class MultiViewBlockReference : AcadObject
     {
 		public double Length { get; set; }
 		public double Width { get; set; }

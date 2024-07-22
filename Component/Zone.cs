@@ -2,7 +2,7 @@
 
 namespace Component
 {
-	public class Zone : ACADObject
+	public class Zone : AcadObject
 	{
 		public double Area { get; set; }
 

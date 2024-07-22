@@ -2,7 +2,7 @@
 
 namespace Component
 {
-	public class Space : ACADObject
+	public class Space : AcadObject
 	{
 		public double Area { get; set; }
 

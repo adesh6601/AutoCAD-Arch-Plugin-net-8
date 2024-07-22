@@ -1,10 +1,7 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Controls;
 using static Autodesk.AutoCAD.LayerManager.LayerFilter;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -16,11 +13,11 @@ namespace Plugin.UI
     public partial class DataExtractor : System.Windows.Window
     {
 
-        public string SelectedProjectPath { get; set; }
+        public string? SelectedProjectPath { get; set; }
 
-        public string SelectedViewPath { get; set; }
+        public string? SelectedViewPath { get; set; }
 
-        public string OutputFolderPath { get; set; }
+        public string? OutputFolderPath { get; set; }
 
         public bool IsReadProjectEnabled { get; set; } = false;
 

@@ -1,6 +1,6 @@
 ﻿namespace Component
 {
-    public class BlockReference : ACADObject
+    public class BlockReference : AcadObject
     {
 		public double Length { get; set; }
 		public double Width { get; set; }

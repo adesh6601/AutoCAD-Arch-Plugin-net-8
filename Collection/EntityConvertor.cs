@@ -8,7 +8,7 @@ namespace Collection
 {
 	public class EntityConvertor
 	{
-		public double UnitConversionFactor;
+		private double UnitConversionFactor;
 
 		public object ConvertEntity(object entity, string entityType, double unitConversionFactor)
 		{
@@ -136,13 +136,12 @@ namespace Collection
 			convertedWall.Length = wall.Length / UnitConversionFactor;
 			convertedWall.Width = wall.Width / UnitConversionFactor;
 			convertedWall.BaseHeight = wall.BaseHeight / UnitConversionFactor;
-			//convertedWall.Area = 
+
 
 			convertedWall.StartPoint = new Component.Point(wall.StartPoint.X / UnitConversionFactor, wall.StartPoint.Y / UnitConversionFactor, wall.StartPoint.Z / UnitConversionFactor);
 			convertedWall.MidPoint = new Component.Point(wall.MidPoint.X / UnitConversionFactor, wall.MidPoint.Y / UnitConversionFactor, wall.MidPoint.Z / UnitConversionFactor);
 			convertedWall.EndPoint = new Component.Point(wall.EndPoint.X / UnitConversionFactor, wall.EndPoint.Y / UnitConversionFactor, wall.EndPoint.Z / UnitConversionFactor);
 
-			//convertedWall.Rotation = 
 
 			convertedWall.CollisionType = wall.CollisionType.ToString();
 
@@ -173,14 +172,11 @@ namespace Collection
 			convertedCurtainWall.Description = curtainWall.Description;
 
 			convertedCurtainWall.Length = curtainWall.Length / UnitConversionFactor;
-			//convertedCurtainWall.Width = 
+
 			convertedCurtainWall.BaseHeight = curtainWall.BaseHeight / UnitConversionFactor;
-			//convertedCurtainWall.Area = 
 
 			convertedCurtainWall.StartPoint = new Component.Point(curtainWall.StartPoint.X / UnitConversionFactor, curtainWall.StartPoint.Y / UnitConversionFactor, curtainWall.StartPoint.Z / UnitConversionFactor);
 			convertedCurtainWall.EndPoint = new Component.Point(curtainWall.EndPoint.X / UnitConversionFactor, curtainWall.EndPoint.Y / UnitConversionFactor, curtainWall.EndPoint.Z / UnitConversionFactor);
-
-			//convertedCurtainWall.Rotation = 
 
 			convertedCurtainWall.CollisionType = curtainWall.CollisionType.ToString();
 
@@ -223,14 +219,11 @@ namespace Collection
 			convertedCurtainWall.Description = curtainWall.Description;
 
 			convertedCurtainWall.Length = curtainWall.Length / UnitConversionFactor;
-			//convertedCurtainWall.Width = 
+
 			convertedCurtainWall.BaseHeight = curtainWall.Height / UnitConversionFactor;
-			//convertedCurtainWall.Area = 
 
 			convertedCurtainWall.StartPoint = new Component.Point(curtainWall.StartPoint.X / UnitConversionFactor, curtainWall.StartPoint.Y / UnitConversionFactor, curtainWall.StartPoint.Z / UnitConversionFactor);
 			convertedCurtainWall.EndPoint = new Component.Point(curtainWall.EndPoint.X / UnitConversionFactor, curtainWall.EndPoint.Y / UnitConversionFactor, curtainWall.EndPoint.Z / UnitConversionFactor);
-
-			//convertedCurtainWall.Rotation = 
 
 			convertedCurtainWall.CollisionType = curtainWall.CollisionType.ToString();
 		}
@@ -254,8 +247,7 @@ namespace Collection
 			convertedWindow.EndPoint = new Component.Point(window.EndPoint.X / UnitConversionFactor, window.EndPoint.Y / UnitConversionFactor, window.EndPoint.Z / UnitConversionFactor);
 
 			convertedWindow.Altitude = window.StartPoint.Z / UnitConversionFactor;
-			convertedWindow.Normal = new Component.Point(window.Normal.X, window.Normal.Y, window.Normal.Z); ;
-			//convertedWindow.Offset = 
+			convertedWindow.Normal = new Component.Point(window.Normal.X, window.Normal.Y, window.Normal.Z);
 
 			convertedWindow.CollisionType = window.CollisionType.ToString();
 		}
@@ -280,8 +272,7 @@ namespace Collection
 			convertedWindowAssembly.StartPoint = new Component.Point(windowAssembly.StartPoint.X / UnitConversionFactor, windowAssembly.StartPoint.Y / UnitConversionFactor, windowAssembly.StartPoint.Z / UnitConversionFactor);
 			convertedWindowAssembly.EndPoint = new Component.Point(windowAssembly.EndPoint.X / UnitConversionFactor, windowAssembly.EndPoint.Y / UnitConversionFactor, windowAssembly.EndPoint.Z / UnitConversionFactor);
 
-			convertedWindowAssembly.Normal = new Component.Point(windowAssembly.Normal.X, windowAssembly.Normal.Y, windowAssembly.Normal.Z); ;
-			//convertedWindowAssembly.Offset = 
+			convertedWindowAssembly.Normal = new Component.Point(windowAssembly.Normal.X, windowAssembly.Normal.Y, windowAssembly.Normal.Z);
 
 			convertedWindowAssembly.CollisionType = windowAssembly.CollisionType.ToString();
 		}
@@ -305,7 +296,6 @@ namespace Collection
 			convertedDoor.EndPoint = new Component.Point(door.EndPoint.X / UnitConversionFactor, door.EndPoint.Y / UnitConversionFactor, door.EndPoint.Z / UnitConversionFactor);
 
 			convertedDoor.Normal = new Component.Point(door.Normal.X, door.Normal.Y, door.Normal.Z);
-			//convertedDoor.Offset = 
 
 			convertedDoor.CollisionType = door.CollisionType.ToString();
 		}
@@ -376,16 +366,13 @@ namespace Collection
 					{
 						loops.Add(slabLoop);
 					}
-
 					slabLoop = loopVertices;
 					area = Math.Abs(loop.Area);
 				}
-
 				else
 				{
 					loops.Add(loopVertices);
 				}
-
 			}
 			loops.Remove(slabLoop);
 
@@ -436,7 +423,6 @@ namespace Collection
 					{
 						loops.Add(slabLoop);
 					}
-
 					slabLoop = loopVertices;
 					area = Math.Abs(loop.Area);
 				}
@@ -444,9 +430,7 @@ namespace Collection
 				{
 					loops.Add(loopVertices);
 				}
-
 			}
-
 			loops.Remove(slabLoop);
 
 			convertedSlab.Holes = loops;
@@ -483,7 +467,6 @@ namespace Collection
 
 				startPoint.Add(translatedVertices.X / UnitConversionFactor);
 				startPoint.Add(translatedVertices.Y / UnitConversionFactor);
-
 
 				EndPoint.Add(translatedEndVertices.X / UnitConversionFactor);
 				EndPoint.Add(translatedEndVertices.Y / UnitConversionFactor);
@@ -542,7 +525,7 @@ namespace Collection
 			wall.MaterialName = windowAssemblyAsWall.MaterialName;
 		}
 
-		public string CheckSegmentType(Wall wall)
+		public static string CheckSegmentType(Wall wall)
 		{
 			Curve3d curveType = wall.BaseCurve(true);
 
@@ -554,7 +537,7 @@ namespace Collection
 			{
 				return "Line";
 			}
-			return null;
+			return "";
 		}
 	}
 }

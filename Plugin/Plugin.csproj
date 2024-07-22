@@ -3,12 +3,14 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 	
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
+	<UseWPF>true</UseWPF>
+	<UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +41,9 @@
     <Reference Include="AdWindows">
       <HintPath>C:\Program Files\Autodesk\AutoCAD 2025\AdWindows.dll</HintPath>
     </Reference>
+
+	  
+
   </ItemGroup>
 
 </Project>

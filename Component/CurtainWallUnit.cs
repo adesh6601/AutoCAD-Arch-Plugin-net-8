@@ -1,6 +1,6 @@
 ﻿namespace Component
 {
-	public class CurtainWallUnit : ACADObject
+	public class CurtainWallUnit : AcadObject
 	{
 		public int CellCount { get; set; }
 

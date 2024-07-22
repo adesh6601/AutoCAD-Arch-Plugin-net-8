@@ -1,6 +1,6 @@
 ﻿namespace Component
 {
-	public class Wall : ACADObject
+	public class Wall : AcadObject
 	{
 		public string Description { get; set; }
 
@@ -23,19 +23,7 @@
 
         public string SegmentType { get; set; }
         
-		public WallTypes.ArcWall ArcWallObject { get; set; } = null;
-
-		// public MaterialColor Ambient { get; set; }
-		// public double ColorBleedScale { get; set; }
-		// public double IndirectBumpScale { get; set; }
-		// public double Luminance { get; set; }
-		// public double ReflectanceScale { get; set; }
-		// public double Reflectivity { get; set; }
-		// public double SelfIllumination { get; set; }
-		// public double Translucence { get; set; }
-		// public double TransmittanceScale { get; set; }
-		// public bool TwoSided { get; set; }
-
+		public WallTypes.ArcWall? ArcWallObject { get; set; } = null;
 
         public Wall() : base() { }
 	}
