@@ -1,41 +1,43 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using Component;
 using Model;
 
 public class LevelFormatter
 {
-	Dictionary<string, bool> UniqueIds = new Dictionary<string, bool>();
-	Dictionary<int, Point> UniqueVerticesDictionary = new Dictionary<int, Point>();
-	Dictionary<string, string> ObjectIdTojsonIdDictionary = new Dictionary<string, string>();
-	Dictionary<string, Vertex> Vertices = new Dictionary<string, Vertex>();
-	Dictionary<string, Line2D> Lines = new Dictionary<string, Line2D>();
-	Dictionary<string, Holes> Holes = new Dictionary<string, Holes>();
-	Dictionary<string, Zone> Zones = new Dictionary<string, Zone>();
-	Dictionary<string, Slab> Slabs = new Dictionary<string, Slab>();
-	Dictionary<string, RoofSlab> RoofSlabs = new Dictionary<string, RoofSlab>();
-	Dictionary<string, Areas> areas = new Dictionary<string, Areas>();
+    readonly Dictionary<string, bool>  UniqueIds = new Dictionary<string, bool>();
+    Dictionary<int, Point> UniqueVerticesDictionary = new Dictionary<int, Point>();
+    Dictionary<string, string> ObjectIdTojsonIdDictionary = new Dictionary<string, string>();
+    Dictionary<string, Vertex> Vertices = new Dictionary<string, Vertex>();
+    Dictionary<string, Line2D> Lines = new Dictionary<string, Line2D>();
+    Dictionary<string, Holes> Holes = new Dictionary<string, Holes>();
+    Dictionary<string, Zone> Zones = new Dictionary<string, Zone>();
+    Dictionary<string, Slab> Slabs = new Dictionary<string, Slab>();
+    Dictionary<string, RoofSlab> RoofSlabs = new Dictionary<string, RoofSlab>();
+    Dictionary<string, Areas> areas = new Dictionary<string, Areas>();
 
-	public Dictionary<string, Layer> layers = new Dictionary<string, Layer>();
-	public Model.Floor Floor;
+    public Dictionary<string, Layer> Layers = new Dictionary<string, Layer>();
+    public Model.Floor Floor;
 
-	public LevelFormatter(Model.Floor floor)
-	{
-		this.Floor = floor;
+    public LevelFormatter(Model.Floor floor)
+    {
+        this.Floor = floor;
 
-		UniqueVertices();
-		GetLinesDictionary();
-		MakeHole();
-		MakeSlabs();
-		MakeRoofSlabs();
-		MakeLayer();
-		// makeZones();
-		//MakeStructuralMembers(structuralMemberDictionary);
-	}
-	public static double PolygonArea(List<List<double>> vertices)
-	{
-		int n = vertices.Count;
-		if (n < 3)
-			return 0; // Not a valid polygon
+        UniqueVertices();
+        GetLinesDictionary();
+        MakeHole();
+        MakeSlabs();
+        MakeRoofSlabs();
+        MakeLayer();
+        // makeZones();
+        /*MakeStructuralMembers(structuralMemberDictionary);*/
+    }
+    public static double PolygonArea(List<List<double>> vertices)
+    {
+        int n = vertices.Count;
+        if (n < 3)
+            return 0; // Not a valid polygon
 
 		// Append the first vertex to the end to close the polygon
 		vertices.Add(vertices[0]);
@@ -47,26 +49,26 @@ public class LevelFormatter
 			area += (vertices[i][0] * vertices[i + 1][1]) - (vertices[i + 1][0] * vertices[i][1]);
 		}
 
-		// Take the absolute value and divide by 2
-		area = Math.Abs(area) / 2;
-		return area;
-	}
-	public bool IsUniquePoint(Point InPoint, Dictionary<int, Point> uniqueVertices)
-	{
-		foreach (var Point in uniqueVertices)
-		{
-			if (Math.Abs(Point.Value.X - InPoint.X) <= 0.1 && Math.Abs(Point.Value.Y - InPoint.Y) <= 0.1)
-			{ return false; }
-		}
-		return true;
-	}
-	public string GenerateId()
-	{
-		int length = 10;
-		string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
-		Random random = new Random();
-		char[] result = new char[length];
-		int maxAttempts = 1000; // Define maximum attempts
+        // Take the absolute value and divide by 2
+        area = Math.Abs(area) / 2;
+        return area;
+    }   
+    public bool IsUniquePoint(Point InPoint, Dictionary<int, Point> uniqueVertices)
+    {
+        foreach (var Point in uniqueVertices)
+        {
+            if (Math.Abs(Point.Value.X - InPoint.X) <= 0.1 && Math.Abs(Point.Value.Y - InPoint.Y) <= 0.1)
+            { return false; }
+        }
+        return true;
+    }
+    public string GenerateId()
+    {
+        int length = 10;
+        string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+        Random random = new Random();
+        char[] result = new char[length];
+        int maxAttempts = 1000; // Define maximum attempts
 
 		for (int attempt = 0; attempt < maxAttempts; attempt++)
 		{
@@ -83,23 +85,23 @@ public class LevelFormatter
 			}
 		}
 
-		throw new Exception("Unable to generate a unique ID after maximum attempts.");
-	}
-	public List<string> GetVerticesOfLine(List<Point> inLine)
-	{
-		List<string> vertexList = new List<string>();
-		foreach (var vertex in Vertices)
-		{
-			if (Math.Abs(vertex.Value.x - inLine[0].X) < 0.1 && Math.Abs(vertex.Value.y - inLine[0].Y) < 0.1)
-			{
-				vertexList.Add(vertex.Key);
-				continue;
-			}
-			if (Math.Abs(vertex.Value.x - inLine[1].X) < 0.1 && Math.Abs(vertex.Value.y - inLine[1].Y) < 0.1)
-			{
-				vertexList.Add(vertex.Key);
-				continue;
-			}
+        throw new Exception("Unable to generate a unique ID after maximum attempts.");
+    }
+    public List<string> GetVerticesOfLine(List<Point> inLine)
+    {
+        List<string> vertexList = new List<string>();
+        foreach (var vertex in Vertices)
+        {
+            if (Math.Abs(vertex.Value.x - inLine[0].X) < 0.1 && Math.Abs(vertex.Value.y - inLine[0].Y) < 0.1)
+            {
+                vertexList.Add(vertex.Key);
+                continue;
+            }
+            if (Math.Abs(vertex.Value.x - inLine[1].X) < 0.1 && Math.Abs(vertex.Value.y - inLine[1].Y) < 0.1)
+            {
+                vertexList.Add(vertex.Key);
+                continue;
+            }
 
 		}
 		return vertexList;
@@ -134,134 +136,151 @@ public class LevelFormatter
 		int IndexOfUniqueVertces = 1;
 		int addUniqueVertex = 1;
 
-		foreach (var pair in Floor.Walls)
-		{
-			Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
-			Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
-			if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
-			{
-				UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
-				IndexOfUniqueVertces++;
-				var startVertex = new Vertex();
-				string uniqueId = GenerateId();
-				startVertex.type = "Vertex";
-				startVertex.x = pair.StartPoint.X;
-				startVertex.y = pair.StartPoint.Y;
-				startVertex.Lines = new List<string>();
+        foreach (var pair in Floor.Walls)
+        {
+            Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
+            Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
+            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            {
+                UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
+                IndexOfUniqueVertces++;
+                var startVertex = new Vertex();
+                startVertex.id = GenerateId();
+                startVertex.name = "Vertex";
+                startVertex.x = pair.StartPoint.X;
+                startVertex.y = pair.StartPoint.Y;
+                startVertex.Lines = new List<string>();
 
-				Vertices.Add(uniqueId, startVertex);
+                Vertices.Add(startVertex.id, startVertex);
 
-			}
-			if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
-			{
+            }
+            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            {
 
-				UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
-				IndexOfUniqueVertces++;
-				var endVertex = new Vertex();
-				string uniqueId = GenerateId();
-				endVertex.type = "Vertex";
-				endVertex.x = pair.EndPoint.X;
-				endVertex.y = pair.EndPoint.Y;
-				endVertex.Lines = new List<string>();
+                UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
+                IndexOfUniqueVertces++;
+                var endVertex = new Vertex();
+                endVertex.id = GenerateId();
+                endVertex.name = "Vertex";
+                endVertex.x = pair.EndPoint.X;
+                endVertex.y = pair.EndPoint.Y;
+                endVertex.Lines = new List<string>();
 
-				Vertices.Add(uniqueId, endVertex);
-
-			}
-
-		}
-
-		foreach (var pair in Floor.CurtainWallLayouts)
-		{
-			Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
-			Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
-			if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
-			{
-				UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
-				IndexOfUniqueVertces++;
-				var startVertex = new Vertex();
-				string uniqueId = GenerateId();
-				startVertex.type = "Vertex";
-				startVertex.x = pair.StartPoint.X;
-				startVertex.y = pair.StartPoint.Y;
-				startVertex.Lines = new List<string>();
-
-				Vertices.Add(uniqueId, startVertex);
-
-			}
-			if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
-			{
-
-				UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
-				IndexOfUniqueVertces++;
-
-				var endVertex = new Vertex();
-				string uniqueId = GenerateId();
-				endVertex.type = "Vertex";
-				endVertex.x = pair.EndPoint.X;
-				endVertex.y = pair.EndPoint.Y;
-				endVertex.Lines = new List<string>();
-
-				Vertices.Add(uniqueId, endVertex);
+                Vertices.Add(endVertex.id, endVertex);
 
 			}
 
 		}
 
-		foreach (var pair in Floor.CurtainWallUnits)
-		{
-			Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
-			Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
-			if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
-			{
-				UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
-				IndexOfUniqueVertces++;
-				var startVertex = new Vertex();
-				string uniqueId = GenerateId();
-				startVertex.type = "Vertex";
-				startVertex.x = pair.StartPoint.X;
-				startVertex.y = pair.StartPoint.Y;
-				startVertex.Lines = new List<string>();
+        foreach (var pair in Floor.CurtainWallLayouts)
+        {
+            Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
+            Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
+            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            {
+                UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
+                IndexOfUniqueVertces++;
+                var startVertex = new Vertex();
+                startVertex.id = GenerateId();
+                startVertex.name = "Vertex";
+                startVertex.x = pair.StartPoint.X;
+                startVertex.y = pair.StartPoint.Y;
+                startVertex.Lines = new List<string>();
 
-				Vertices.Add(uniqueId, startVertex);
+                Vertices.Add(startVertex.id, startVertex);
 
-			}
-			if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
-			{
+            }
+            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            {
+
 				UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
 				IndexOfUniqueVertces++;
-				var endVertex = new Vertex();
-				string uniqueId = GenerateId();
-				endVertex.type = "Vertex";
-				endVertex.x = pair.EndPoint.X;
-				endVertex.y = pair.EndPoint.Y;
-				endVertex.Lines = new List<string>();
 
-				Vertices.Add(uniqueId, endVertex);
+                var endVertex = new Vertex();
+                endVertex.id = GenerateId();
+                endVertex.name = "Vertex";
+                endVertex.x = pair.EndPoint.X;
+                endVertex.y = pair.EndPoint.Y;
+                endVertex.Lines = new List<string>();
+
+                Vertices.Add(endVertex.id, endVertex);
 
 			}
 
 		}
-	}
-	public void GetLinesDictionary()
-	{
-		foreach (var line in Floor.Walls)
-		{
-			var l1 = new Line2D();
-			string uniqueId = GenerateId();
-			l1.type = line.DisplayName;
-			string newJson = @"{
+
+        foreach (var pair in Floor.CurtainWallUnits)
+        {
+            Point startPoint = new Point(pair.StartPoint.X, pair.StartPoint.Y, pair.StartPoint.Z);
+            Point endPoint = new Point(pair.EndPoint.X, pair.EndPoint.Y, pair.EndPoint.Z);
+            if (IsUniquePoint(startPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            {
+                UniqueVerticesDictionary.Add(IndexOfUniqueVertces, startPoint);
+                IndexOfUniqueVertces++;
+                var startVertex = new Vertex();
+                startVertex.id = GenerateId();
+                startVertex.name = "Vertex";
+                startVertex.x = pair.StartPoint.X;
+                startVertex.y = pair.StartPoint.Y;
+                startVertex.Lines = new List<string>();
+
+                Vertices.Add(startVertex.id, startVertex);
+
+            }
+            if (IsUniquePoint(endPoint, UniqueVerticesDictionary) == true && addUniqueVertex == 1)
+            {
+                UniqueVerticesDictionary.Add(IndexOfUniqueVertces, endPoint);
+                IndexOfUniqueVertces++;
+                var endVertex = new Vertex();
+                endVertex.id = GenerateId();
+                endVertex.name = "Vertex";
+                endVertex.x = pair.EndPoint.X;
+                endVertex.y = pair.EndPoint.Y;
+                endVertex.Lines = new List<string>();
+
+                Vertices.Add(endVertex.id, endVertex);
+
+			}
+
+        }
+
+
+    }
+    public void GetLinesDictionary()
+    {
+        foreach (var line in Floor.Walls)
+        {
+            var l1 = new Line2D();
+            l1.id = GenerateId();
+            //l1.id = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length-2);
+            l1.type = line.DisplayName;
+            l1.name = "wall";
+            string newJson = @"{
                         ""style"":"""",
                         ""length"": 0,
                         ""height"":0,
                         ""baseOffset"":0,
-                        ""thickness"": 0
-                      }";
-			var initialJson = JObject.Parse(newJson);
-			initialJson["length"] = line.Length;
-			initialJson["height"] = line.BaseHeight;
-			initialJson["thickness"] = line.Width;// Set the desired length value here
-			initialJson["style"] = line.Style;
-			initialJson["baseOffset"] = line.StartPoint.Z;
+                        ""thickness"": 10.236666666666668,
+                        ""userSetPartition"": false,
+                        ""materialProperties"": {
+                            ""uValueUnit"": ""Btu/(hr-ft²-°F)"",
+                            ""absorptivity"": 0.9,
+                            ""materialAssembly"": ""Face Brick + 1\"" Insulation + 4\"" LW Concrete Block"",
+                            ""wallGroup"": ""D"",
+                            ""thicknessUnit"": ""in"",
+                            ""total_Thickness"": 6.142,
+                            ""uValue"": 0.184,
+                            ""transmissivity"": 0,
+                            ""colorAdjustmentFactor"": 1
+                        }
+                    }";
+            var initialJson = JObject.Parse(newJson);
+            initialJson["length"] = line.Length;
+            initialJson["height"] = line.BaseHeight;
+            initialJson["thickness"] = line.Width;// Set the desired length value here
+            initialJson["type"] = line.DisplayName;
+            initialJson["style"] = line.Style;
+            initialJson["baseOffset"] = line.StartPoint.Z;
 
 			l1.ArcWall = line.ArcWallObject;
 			string modifiedJson = initialJson.ToString();
@@ -273,35 +292,37 @@ public class LevelFormatter
 			points.Add(endPoint);
 
 
-			if (GetVerticesOfLine(points).Count == 2)
-			{
-				l1.vertices = GetVerticesOfLine(points);
-				l1.holes = new List<string>();
-				string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
-				if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, uniqueId); }
-				Lines.Add(uniqueId, l1);
+            if (GetVerticesOfLine(points).Count == 2)
+            {
+                l1.vertices = GetVerticesOfLine(points);
+                l1.holes = new List<string>();
+                string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, l1.id); }
+                Lines.Add(l1.id, l1);
 
-				if (l1.vertices != null)
-				{
-					foreach (var vertexId in l1.vertices)
-					{
-						Vertices[vertexId].Lines.Add(uniqueId);
-					}
-				}
-			}
-			else
-			{
-				string test = ""; //To check any line which don't contains two vertices
-			}
+                if (l1.vertices != null)
+                {
+                    foreach (var vertexId in l1.vertices)
+                    {
+                        Vertices[vertexId].Lines.Add(l1.id);
+                    }
+                }
+            }
+            else
+            {
+                var test = ""; //To check any line which don't contains two vertices
+            }
 
-		}
+        }
 
-		foreach (var line in Floor.CurtainWallLayouts)
-		{
-			var l1 = new Line2D();
-			string uniqueId = GenerateId();
-			l1.type = line.DisplayName;
-			string newJson = @"{
+        foreach (var line in Floor.CurtainWallLayouts)
+        {
+            var l1 = new Line2D();
+            l1.id = GenerateId();
+            //l1.id = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length-2);
+            l1.type = line.DisplayName;
+            l1.name = "wall";
+            string newJson = @"{
                         ""style"":"""",
                         ""length"": 0,
                         ""height"":0,
@@ -323,34 +344,36 @@ public class LevelFormatter
 			points.Add(startPoint);
 			points.Add(endPoint);
 
-			if (GetVerticesOfLine(points).Count == 2)
-			{
-				l1.vertices = GetVerticesOfLine(points);
-				l1.holes = new List<string>();
-				string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
-				if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, uniqueId); }
-				Lines.Add(GenerateId(), l1);
+            if (GetVerticesOfLine(points).Count == 2)
+            {
+                l1.vertices = GetVerticesOfLine(points);
+                l1.holes = new List<string>();
+                string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, l1.id); }
+                Lines.Add(l1.id, l1);
 
-				if (l1.vertices != null)
-				{
-					foreach (var vertexId in l1.vertices)
-					{
-						Vertices[vertexId].Lines.Add(uniqueId);
-					}
-				}
-			}
-			else
-			{
-				string Test = "";  //To check any line which don't contain two vertices
-			}
-		}
+                if (l1.vertices != null)
+                {
+                    foreach (var vertexId in l1.vertices)
+                    {
+                        Vertices[vertexId].Lines.Add(l1.id);
+                    }
+                }
+            }
+            else
+            {
+                var Test = "";  //To check any line which don't contain two vertices
+            }
+        }
 
-		foreach (var line in Floor.CurtainWallUnits)
-		{
-			var l1 = new Line2D();
-			string uniqueId = GenerateId();
-			l1.type = line.DisplayName;
-			string newJson = @"{                        
+        foreach (var line in Floor.CurtainWallUnits)
+        {
+            var l1 = new Line2D();
+            l1.id = GenerateId();
+            //l1.id = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length-2);
+            l1.type = line.DisplayName;
+            l1.name = "wall";
+            string newJson = @"{                        
                         ""style"":"""",
                         ""length"": 300,
                         ""thickness"": 0.1236666666666668,
@@ -372,51 +395,55 @@ public class LevelFormatter
 			points.Add(startPoint);
 			points.Add(endPoint);
 
-			if (GetVerticesOfLine(points).Count == 2)
-			{
-				l1.vertices = GetVerticesOfLine(points);
-				l1.holes = new List<string>();
-				string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
-				if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, uniqueId); }
+            if (GetVerticesOfLine(points).Count == 2)
+            {
+                l1.vertices = GetVerticesOfLine(points);
+                l1.holes = new List<string>();
+                string key = line.ObjectId.ToString().Substring(1, line.ObjectId.ToString().Length - 2).ToString();
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(key)) { ObjectIdTojsonIdDictionary.Add(key, l1.id); }
 
-				Lines.Add(GenerateId(), l1);
+                Lines.Add(l1.id, l1);
 
-				if (l1.vertices != null)
-				{
-					foreach (var vertexId in l1.vertices)
-					{
-						Vertices[vertexId].Lines.Add(uniqueId);
-					}
-				}
-			}
-			else
-			{
-				string Test = ""; //To check any line which don't contain two vertices
-			}
-		}
-
-	}
-	public void MakeHole()
-	{
-		foreach (var window in Floor.WindowAssemblies)
-		{
-			if (window.WallId != null && ObjectIdTojsonIdDictionary.ContainsKey(window.WallId))
-			{
-				var line = Lines[ObjectIdTojsonIdDictionary[window.WallId]];
-				Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
-				Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
+                if (l1.vertices != null)
+                {
+                    foreach (var vertexId in l1.vertices)
+                    {
+                        Vertices[vertexId].Lines.Add(l1.id);
+                    }
+                }
+            }
+            else
+            {
+                var Test = ""; //To check any line which don't contain two vertices
+            }
+        }
 
 
-				Holes windowHole = new Holes();
-				windowHole.line = ObjectIdTojsonIdDictionary[window.WallId];
-				string uniqueId = GenerateId();
-				Lines[windowHole.line].holes.Add(uniqueId);
-				windowHole.type = window.DisplayName;
-				string newJson1 = @"{
-                        ""width"": 0,
-                        ""height"": 0,
-                        ""altitude"": 0,
-                        ""thickness"": 0,
+    }
+    public void MakeHole()
+    {
+        foreach (var window in Floor.WindowAssemblies)
+        {
+            if (window.WallId != null && ObjectIdTojsonIdDictionary.ContainsKey(window.WallId))
+            {
+                var line = Lines[ObjectIdTojsonIdDictionary[window.WallId]];
+                Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
+                Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
+
+
+                Holes windowHole = new Holes();
+                windowHole.line = ObjectIdTojsonIdDictionary[window.WallId];
+                windowHole.id = GenerateId();
+                Lines[windowHole.line].holes.Add(windowHole.id);
+
+                // windowHole.id = window.ObjectId.ToString().Substring(1, window.ObjectId.ToString().Length - 2); ;
+                windowHole.type = window.DisplayName;
+                windowHole.name = "window";
+                string newJson1 = @"{
+                        ""width"": 0.18,
+                        ""height"": 0.35,
+                        ""altitude"": 0.25,
+                        ""thickness"": 0.6,
                         ""style"":"""",
                         ""frameWidth"":"""",
                         ""frameDepth"":"""",
@@ -474,11 +501,11 @@ public class LevelFormatter
 				//double offset = (GetLength(points) + (window.Width / 2)) / GetLength(wallLength);
 				double offset = (GetLength(points)) / GetLength(wallLength);
 
-				if (offset > 1)
-				{
-					var Test = "";
-				}
-				windowHole.offset = offset;
+                if (offset > 1)
+                {
+                    var Test = "";
+                }
+                windowHole.offset = offset;
 
 				Normal normal1 = new Normal();
 				normal1.x = window.Normal.X;
@@ -486,16 +513,16 @@ public class LevelFormatter
 				normal1.z = window.Normal.Z;
 				windowHole.normal = normal1;
 
-				if (!ObjectIdTojsonIdDictionary.ContainsKey(window.ObjectId.ToString())) { ObjectIdTojsonIdDictionary.Add(window.ObjectId.ToString(), uniqueId); }
-				Holes.Add(uniqueId, windowHole);
-			}
-			else
-			{
-				string Test = ""; // To check windowAssembly has a wall or Not
-			}
+                if (!ObjectIdTojsonIdDictionary.ContainsKey(window.ObjectId.ToString())) { ObjectIdTojsonIdDictionary.Add(window.ObjectId.ToString(), windowHole.id); }
+                Holes.Add(windowHole.id, windowHole);
+            }
+            else
+            {
+                var Test = ""; // To check windowAssembly has a wall or Not
+            }
 
 
-		}
+        }
 
 		foreach (var window in Floor.Windows)
 		{
@@ -505,13 +532,15 @@ public class LevelFormatter
 				Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
 				Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
 
-				Holes windowHole = new Holes();
-				string uniqueId = GenerateId();
-				windowHole.line = ObjectIdTojsonIdDictionary[window.WallId];
-				Lines[windowHole.line].holes.Add(uniqueId);
+                Holes windowHole = new Holes();
+                windowHole.id = GenerateId();
+                windowHole.line = ObjectIdTojsonIdDictionary[window.WallId];
+                Lines[windowHole.line].holes.Add(windowHole.id);
 
-				windowHole.type = window.DisplayName;
-				string newJson1 = @"{
+                // windowHole.id = window.ObjectId.ToString().Substring(1, window.ObjectId.ToString().Length - 2); ;
+                windowHole.type = window.DisplayName;
+                windowHole.name = "window";
+                string newJson1 = @"{
                         ""width"": 0.18,
                         ""height"": 0.35,
                         ""altitude"": 0.25,
@@ -521,26 +550,24 @@ public class LevelFormatter
                         ""frameDepth"":"""",
                         ""glassThickness"":""""
                         }";
-				var initialJson = JObject.Parse(newJson1);
-				//initialJson["altitude"] = window.StartPoint.Z;
-				initialJson["width"] = window.Width;
-				initialJson["height"] = window.Height;
-				initialJson["style"] = window.Style;
-				/*                    initialJson["FrameWidth"] = window.FrameWidth;
+                var initialJson = JObject.Parse(newJson1);
+                //initialJson["altitude"] = window.StartPoint.Z;
+                initialJson["width"] = window.Width;
+                initialJson["height"] = window.Height;
+                initialJson["style"] = window.Style;
+                /*                    initialJson["FrameWidth"] = window.FrameWidth;
                                     initialJson["FrameDepth"] = window.FrameDepth;
                                     initialJson["GlassThickness"] = window.GlassThickness;*/
-				initialJson["altitude"] = window.StartPoint.Z;
-
-				string modifiedJson = initialJson.ToString();
-				windowHole.properties = JObject.Parse(modifiedJson);
-
-				Point startWindow = new Point(window.StartPoint.X, window.StartPoint.Y, 0.0);
-				Point endWindow = new Point(window.EndPoint.X, window.EndPoint.Y, 0.0);
-				windowHole.startPoint = startWindow;
-				windowHole.endPoint = endWindow;
-				List<Point> points = new List<Point>();
-				points.Add(startWindow);
-				points.Add(endWindow);
+                initialJson["altitude"] = window.StartPoint.Z;
+                string modifiedJson = initialJson.ToString();
+                windowHole.properties = JObject.Parse(modifiedJson);
+                Point startWindow = new Point(window.StartPoint.X, window.StartPoint.Y, 0.0);
+                Point endWindow = new Point(window.EndPoint.X, window.EndPoint.Y, 0.0);
+                windowHole.startPoint = startWindow;
+                windowHole.endPoint = endWindow;
+                List<Point> points = new List<Point>();
+                points.Add(startWindow);
+                points.Add(endWindow);
 
 
 				Point windowStartingVertex = new Point();
@@ -577,12 +604,12 @@ public class LevelFormatter
 				double offset = (GetLength(points) + (window.Width / 2)) / GetLength(wallLength);
 				//double offset = (GetLength(points)) / GetLength(wallLength);
 
-				if (offset > 1)
-				{
-					var Test = ""; // To Check if Offset is Greater then one
-				}
+                if (offset > 1)
+                {
+                    var Test = ""; // To Check if Offset is Greater then one
+                }
 
-				windowHole.offset = offset;
+                windowHole.offset = offset;
 
 				Normal normal1 = new Normal();
 				normal1.x = window.Normal.X;
@@ -590,66 +617,66 @@ public class LevelFormatter
 				normal1.z = window.Normal.Z;
 				windowHole.normal = normal1;
 
-				Holes.Add(uniqueId, windowHole);
-			}
-			else
-			{
-				string Test = ""; // To check window is attached to any wall or not
-			}
+                Holes.Add(windowHole.id, windowHole);
+            }
+            else
+            {
+                var Test = ""; // To check window is attached to any wall or not
+            }
 
-		}
+        }
 
-		foreach (var door in Floor.Doors)
-		{
-			Line2D line = null;
-			string lineId = null;
-			if (door.WallId != null && ObjectIdTojsonIdDictionary.ContainsKey(door.WallId))
-			{
-				//if door is directly attached wall
-				if (Lines.ContainsKey(ObjectIdTojsonIdDictionary[door.WallId]))
-				{
-					line = Lines[ObjectIdTojsonIdDictionary[door.WallId]];
-					lineId = ObjectIdTojsonIdDictionary[door.WallId];
-				}
-				else
-				{
-					//if door is  attached door/window assembly and it is attached to wall
-					foreach (var doorwindowAssembly in Floor.WindowAssemblies)
-					{
-						if (door.WallId == doorwindowAssembly.ObjectId)
-						{
-							line = Lines[ObjectIdTojsonIdDictionary[doorwindowAssembly.WallId]];
-							lineId = ObjectIdTojsonIdDictionary[doorwindowAssembly.WallId];
-							break;
-						}
-					}
-				}
-				if (line == null)
-				{
-					string Test = ""; // To check door has wall or not
-					continue;
-				}
-				Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
-				Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
+        foreach (var door in Floor.Doors)
+        {
+            Line2D line = null;
+            if (door.WallId != null && ObjectIdTojsonIdDictionary.ContainsKey(door.WallId))
+            {
+                //if door is directly attached wall
+                if (Lines.ContainsKey(ObjectIdTojsonIdDictionary[door.WallId]))
+                {
+                    line = Lines[ObjectIdTojsonIdDictionary[door.WallId]];
+                }
+                else
+                {
+                    //if door is  attached door/window assembly and it is attached to wall
+                    foreach (var doorwindowAssembly in Floor.WindowAssemblies)
+                    {
+                        if (door.WallId == doorwindowAssembly.ObjectId)
+                        {
+                            line = Lines[ObjectIdTojsonIdDictionary[doorwindowAssembly.WallId]];
+                            continue;
+                        }
+                    }
+                }
+                if (line == null)
+                {
+                    var Test = ""; // To check door has wall or not
+                    continue;
+                }
+                Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
+                Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
 
 
-				Holes hole = new Holes();
-				string uniqueId = GenerateId();
-				hole.line = lineId;
-				Lines[hole.line].holes.Add(uniqueId);
-				hole.type = door.DisplayName;
-				string newJson = @"{
+                Holes hole = new Holes();
+                hole.id = GenerateId();
+                hole.line = line.id;
+                Lines[hole.line].holes.Add(hole.id);
+                //hole.id = door.ObjectId.ToString().Substring(1, door.ObjectId.ToString().Length - 2); ;
+                hole.type = door.DisplayName;
+                hole.name = "door";
+                string newJson = @"{
                         ""width"": 0.18,
                         ""height"": 0.35,
                         ""altitude"": 0,
                         ""thickness"": 0.1016,
                         ""style"":""""
                         }";
-				var initialJson = JObject.Parse(newJson);
-				//initialJson["altitude"] = door.StartPoint.Z;
-				initialJson["width"] = door.Width;
-				initialJson["height"] = door.Height;
-				initialJson["style"] = door.Style;
+                var initialJson = JObject.Parse(newJson);
+                //initialJson["altitude"] = door.StartPoint.Z;
+                initialJson["width"] = door.Width;
+                initialJson["height"] = door.Height;
+                initialJson["type"] = door.DisplayName;
+                initialJson["style"] = door.Style;
 
 				// Set the desired length value here
 				string modifiedJson = initialJson.ToString();
@@ -692,12 +719,13 @@ public class LevelFormatter
 				wallLength.Add(point2);
 				wallLength.Add(point1);
 
-				double offset = (GetLength(points) + (door.Width / 2)) / GetLength(wallLength);
-				if (offset > 1)
-				{
-					string Test = "";
-				}
-				hole.offset = offset;
+                double offset = (GetLength(points) + (door.Width / 2)) / GetLength(wallLength);
+                if (offset > 1)
+                {
+                    /*offset = offset - (offset / GetLength(wallLength));*/
+                    var Test = "";
+                }
+                hole.offset = offset;
 
 				Normal normal = new Normal();
 				normal.x = door.Normal.X;
@@ -705,14 +733,14 @@ public class LevelFormatter
 				normal.z = door.Normal.Z;
 				hole.normal = normal;
 
-				Holes.Add(uniqueId, hole);
-			}
-			else
-			{
-				string Test = ""; // To check if door has wall or not
-			}
+                Holes.Add(hole.id, hole);
+            }
+            else
+            {
+                var Test = ""; // To check if door has wall or not
+            }
 
-		}
+        }
 
 		foreach (var door in Floor.Openings)
 		{
@@ -722,11 +750,15 @@ public class LevelFormatter
 				Point point1 = new Point(Vertices[line.vertices[0]].x, Vertices[line.vertices[0]].y, Vertices[line.vertices[0]].z);
 				Point point2 = new Point(Vertices[line.vertices[1]].x, Vertices[line.vertices[1]].y, Vertices[line.vertices[1]].z);
 
-				Holes hole = new Holes();
-				string uniqueId = GenerateId();
-				hole.line = ObjectIdTojsonIdDictionary[door.WallId];
-				Lines[hole.line].holes.Add(uniqueId);
-				hole.type = door.DisplayName;
+
+                Holes hole = new Holes();
+                hole.id = GenerateId();
+                hole.line = ObjectIdTojsonIdDictionary[door.WallId];
+                Lines[hole.line].holes.Add(hole.id);
+                //hole.id = door.ObjectId.ToString().Substring(1, door.ObjectId.ToString().Length - 2); ;
+                //hole.type = "door";
+                hole.type = door.DisplayName;
+                hole.name = "door";
 
 				string newJson = @"{
                         ""width"": 0.18,
@@ -735,24 +767,24 @@ public class LevelFormatter
                         ""thickness"": 0.1016,
                         ""style"":""""
                         }";
-				var initialJson = JObject.Parse(newJson);
-				//initialJson["altitude"] = door.StartPoint.Z;
-				initialJson["width"] = door.Width;
-				initialJson["height"] = door.Height;
-				//initialJson["style"] = "Opening";
+                var initialJson = JObject.Parse(newJson);
+                //initialJson["altitude"] = door.StartPoint.Z;
+                initialJson["width"] = door.Width;
+                initialJson["height"] = door.Height;
+                //initialJson["Style"] = "Opening";
 
-
-				string modifiedJson = initialJson.ToString();
-				hole.properties = JObject.Parse(modifiedJson);
-				Point startWindow = new Point(door.StartPoint.X, door.StartPoint.Y, 0.0);
-				Point endWindow = new Point(door.EndPoint.X, door.EndPoint.Y, 0.0);
-				List<Point> points = new List<Point>();
-				points.Add(startWindow);
-				points.Add(endWindow);
-				hole.startPoint = startWindow;
-				hole.endPoint = endWindow;
-				Point windowStartingVertex = new Point();
-				Point wallStartingVertex = new Point();
+                // Set the desired length value here
+                string modifiedJson = initialJson.ToString();
+                hole.properties = JObject.Parse(modifiedJson);
+                Point startWindow = new Point(door.StartPoint.X, door.StartPoint.Y, 0.0);
+                Point endWindow = new Point(door.EndPoint.X, door.EndPoint.Y, 0.0);
+                List<Point> points = new List<Point>();
+                points.Add(startWindow);
+                points.Add(endWindow);
+                hole.startPoint = startWindow;
+                hole.endPoint = endWindow;
+                Point windowStartingVertex = new Point();
+                Point wallStartingVertex = new Point();
 
 				if (IsStartingVertex(points))
 				{
@@ -782,14 +814,14 @@ public class LevelFormatter
 				wallLength.Add(point2);
 				wallLength.Add(point1);
 
-				double offset = (GetLength(points) + (door.Width / 2)) / GetLength(wallLength);
-				//double offset = (GetLength(points)) / GetLength(wallLength);
-				if (offset > 1)
-				{
-					/*offset = offset - (offset / GetLength(wallLength));*/
-					var Test = "";
-				}
-				hole.offset = offset;
+                double offset = (GetLength(points) + (door.Width / 2)) / GetLength(wallLength);
+                //double offset = (GetLength(points)) / GetLength(wallLength);
+                if (offset > 1)
+                {
+                    /*offset = offset - (offset / GetLength(wallLength));*/
+                    var Test = "";
+                }
+                hole.offset = offset;
 
 				Normal normal = new Normal();
 				normal.x = door.Normal.X;
@@ -797,23 +829,24 @@ public class LevelFormatter
 				normal.z = door.Normal.Z;
 				hole.normal = normal;
 
-				Holes.Add(uniqueId, hole);
-			}
-			else
-			{
-				string Test = "";  // To check opening has wall or not
-			}
+                Holes.Add(hole.id, hole);
+            }
+            else
+            {
+                var Test = "";  // To check opening has wall or not
+            }
 
 
-		}
-	}
-	public void MakeArea(List<List<double>> vertices, int count, string spaceId)
-	{
-		List<string> listOfVertices = new List<string>();
-		Areas area = new Areas();
-		string uniqueId = GenerateId();
-		area.type = "area";
-		area.name = "Space " + count;
+        }
+    }
+    public void MakeArea(List<List<double>> vertices, int count, string spaceId)
+    {
+        List<string> listOfVertices = new List<string>();
+        Areas area = new Areas();
+        area.id = GenerateId();
+        // area.id = spaceId;
+        area.type = "area";
+        area.name = "Space " + count;
 
 		List<List<double>> verticeOfArea = new List<List<double>>();
 		List<Point> verticeOfPolygoan = new List<Point>();
@@ -828,9 +861,9 @@ public class LevelFormatter
 			verticeOfPolygoan.Add(point);
 		}
 
-		double areaOfPolygoan = PolygonArea(verticeOfArea);
+        double areaOfPolygoan = PolygonArea(verticeOfArea);
 
-		if (verticeOfArea.Count != 0) { verticeOfArea.RemoveAt(verticeOfArea.Count - 1); }
+        if (verticeOfArea.Count != 0) { verticeOfArea.RemoveAt(verticeOfArea.Count - 1); }
 
 		float[][][] polygon = new float[1][][];
 		polygon[0] = FluidPoint.FluidPointCalculator.ConvertPolygonToFloatArray(verticeOfPolygoan);
@@ -840,17 +873,17 @@ public class LevelFormatter
 		area.fluidPoint.Add("x", fluidPointArray[0]);
 		area.fluidPoint.Add("y", fluidPointArray[1]);
 
-		areas.Add(uniqueId, area);
-	}
-	public Layer MakeLayer()
-	{
-		var layer1 = new Layer();
-		layer1.id = "layer-1";
-		layer1.altitude = 0;
-		layer1.vertices = Vertices;
-		layer1.elevation = 0;
-		//layer1.zones = zones;
-		List<List<List<double>>> rooms = new List<List<List<double>>>();
+        areas.Add(area.id, area);
+    }
+    public Layer MakeLayer()
+    {
+        var layer1 = new Layer();
+        layer1.id = "layer-1";
+        layer1.altitude = 0;
+        layer1.vertices = Vertices;
+        layer1.elevation = 0;
+        //layer1.zones = zones;
+        List<List<List<double>>> rooms = new List<List<List<double>>>();
 
 		List<string> spaceIdList = new List<string>();
 		foreach (var kvp in Floor.Spaces)
@@ -903,7 +936,7 @@ public class LevelFormatter
 		layer1.roofSlabs = RoofSlabs;
 		//layer1.structuralMembers = structuralMembers;
 
-		layers.Add("layer-1", layer1);
+		Layers.Add("layer-1", layer1);
 		return layer1;
 	}
 	public void MakeSlabs()
@@ -1062,26 +1095,26 @@ public class Normal
 #region Vertices
 public class Vertex
 {
-	public string type { get; set; }
-	public double x { get; set; }
-	public double y { get; set; }
-	public double z { get; set; }
-	public List<string> Lines { get; set; }
+    public string id { get; set; }
+    public string name { get; set; }
+    public double x { get; set; }
+    public double y { get; set; }
+    public double z { get; set; }
+    public List<string> Lines { get; set; }
 }
 
-public class VertexProperties
-{
-}
 #endregion
 
 #region Lines
 public class Line2D
 {
-	public string type { get; set; }
-	public JObject properties { get; set; }
-	public List<string> vertices { get; set; }
-	public List<string> holes { get; set; }
-	public WallTypes.CurtainArcWall curatainArcWall { get; set; }
+    public string id { get; set; }
+    public string type { get; set; }
+    public string name { get; set; }
+    public JObject properties { get; set; }
+    public List<string> vertices { get; set; }
+    public List<string> holes { get; set; }
+    public WallTypes.CurtainArcWall curatainArcWall { get; set; }
 
 	public WallTypes.ArcWall ArcWall { get; set; }
 
@@ -1089,18 +1122,21 @@ public class Line2D
 
 public class LineProperties
 {
-	public double length { get; set; }
-	public double thickness { get; set; }
-	public bool userSetPartition { get; set; }
+    public double length { get; set; }
+    public double thickness { get; set; }
+    public bool userSetPartition { get; set; }
+    public MaterialProperties materialProperties { get; set; }
 }
 #endregion
 
 #region Areas
 public class Areas
 {
-	public string type { get; set; }
-	public string name { get; set; }
-	public Dictionary<string, double> fluidPoint { get; set; }
+
+    public string id { get; set; }
+    public string type { get; set; }
+    public string name { get; set; }
+    public Dictionary<string, double> fluidPoint { get; set; }
 }
 
 #endregion
@@ -1108,24 +1144,23 @@ public class Areas
 #region Holes
 public class Holes
 {
-	public string type { get; set; }
-	public JObject properties { get; set; }
-	public double offset { get; set; }
-	public string line { get; set; }
-	//public string mountType { get; set; }
-	//public string diffuserType { get; set; }
-	public Normal normal { get; set; }
+
+    public string id { get; set; }
+    public string type { get; set; }
+    public string name { get; set; }
+    public JObject properties { get; set; }
+    public double offset { get; set; }
+    public string line { get; set; }
+    //public string mountType { get; set; }
+    //public string diffuserType { get; set; }
+    public Normal normal { get; set; }
 
 	public Point startPoint { get; set; }
 
 	public Point endPoint { get; set; }
 }
 
-public class HoleProperties
-{
-}
-
-public class DoorProperties : HoleProperties
+public class DoorProperties 
 {
 	public double width { get; set; }
 	public double height { get; set; }
@@ -1135,7 +1170,7 @@ public class DoorProperties : HoleProperties
 	public bool infiltration { get; set; }
 }
 
-public class WindowProperties : HoleProperties
+public class WindowProperties 
 {
 	public double width { get; set; }
 	public double height { get; set; }
@@ -1169,26 +1204,26 @@ public class RoofSlab
 #region Material Properties
 public class MaterialProperties
 {
-	public string materialAssembly;
-	public double total_Thickness;
-	public double uValue;
-	public string uValueUnit = "Btu/(hr-ft²-°F)";
-	public double transmissivity;
-	public double absorptivity;
-	public string thicknessUnit = "in";
+    public string materialAssembly;
+    public double total_Thickness;
+    public double uValue;
+    public string uValueUnit = "Btu/(hr-ft²-°F)";
+    public double transmissivity;
+    public double absorptivity;
+    public string thicknessUnit = "in";
 }
 
 public class RoofCeilingMaterialProperties : MaterialProperties
 {
-	public double uValueSolarLoad;
-	public double colorAdjustmentFactor;
-	public double f;
+    public double uValueSolarLoad;
+    public double colorAdjustmentFactor;
+    public double f;
 }
 
 public class GlassMaterialProperties : MaterialProperties
 {
-	public double shadingCoefficient;
-	public List<int> color;
+    public double shadingCoefficient;
+    public List<int> color;
 }
 
 #endregion

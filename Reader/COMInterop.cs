@@ -4,7 +4,7 @@ using System.Runtime.InteropServices.ComTypes;
 
 namespace Autodesk.AutoCAD.InteropHelpers
 {
-	public static class COMInterop
+	public static class ComInterop
 	{
 		[DllImport("ole32.dll", CharSet = CharSet.Unicode)]
 		internal static extern int CLSIDFromProgID(string lpszProgID, out Guid lpclsid);
@@ -28,7 +28,7 @@ namespace Autodesk.AutoCAD.InteropHelpers
 					if (appname?.StartsWith(name) == true)
 						return comObject;
 				}
-				catch
+				catch(Exception ex)
 				{
 					// no need
 				}

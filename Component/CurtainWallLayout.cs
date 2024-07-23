@@ -1,6 +1,6 @@
 ﻿namespace Component
 {
-	public class CurtainWallLayout : ACADObject
+	public class CurtainWallLayout : AcadObject
 	{
 		public int CellCount { get; set; }
 
@@ -22,7 +22,7 @@
 		
 		public string MaterialName { get; set; }
 
-        public WallTypes.CurtainArcWall ArcWallObject { get; set; }
+        public WallTypes.CurtainArcWall? ArcWallObject { get; set; } = null;
 
 
         public CurtainWallLayout() : base() { }

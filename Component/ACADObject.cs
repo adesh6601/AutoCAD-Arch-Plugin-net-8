@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace Component
+﻿namespace Component
 {
-	public class ACADObject
+	public class AcadObject
 	{
-		public string DisplayName { get; set; }
+		public string? DisplayName { get; set; }
 
-		public string ObjectId { get; set; }
+		public string? ObjectId { get; set; }
 
 		public Dictionary<string, HashSet<string>> DivisionsAndLevels { get; set; } = new Dictionary<string, HashSet<string>>();
 

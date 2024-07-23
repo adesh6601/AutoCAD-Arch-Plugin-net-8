@@ -12,7 +12,6 @@ namespace Plugin
 		public static string OutputFilePath { get; set; }
 
 		Reader Reader;
-		Builder Builder;
 		Formatter Formatter;
 
 		Entities Entities;
@@ -26,14 +25,13 @@ namespace Plugin
 		public void InitiateReadProject()
 		{
 			Reader = new Reader();
-			Builder = new Builder();
 			Formatter = new Formatter();
 
-			Entities = new Entities();
-			Site = new Site();
+            Entities Entities = new Entities();
+            Site Site = new Site();
 
-			SiteJson = new JObject();
-			ProjectProperties = new JObject();
+            JObject SiteJson = new JObject();
+            JObject ProjectProperties = new JObject();
 
 			Reader.ReadProject(ref ProjectProperties, ProjectPath, Entities);
 
@@ -41,7 +39,7 @@ namespace Plugin
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + "Site.json";
+			OutputFilePath += "\\" + "Site.json";
 
 			Writer.Write(SiteJson, OutputFilePath);
 
@@ -52,22 +50,21 @@ namespace Plugin
 		public void InitiateReadView()
 		{
 			Reader = new Reader();
-			Builder = new Builder();
 			Formatter = new Formatter();
+ 
+            Entities Entities = new Entities();
+            Site Site = new Site();
 
-			Entities = new Entities();
-			Site = new Site();
+            JObject SiteJson = new JObject();
+            JObject ProjectProperties = new JObject();
 
-			SiteJson = new JObject();
-			ProjectProperties = new JObject();
-
-			Reader.ReadViews(ref ProjectProperties, ProjectPath, ViewsPath, Entities);
+            Reader.ReadViews(ref ProjectProperties, ProjectPath, ViewsPath, Entities);
 
 			Builder.Build(Entities, Site);
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(ViewsPath) + ".json";
+			OutputFilePath += "\\" + System.IO.Path.GetFileNameWithoutExtension(ViewsPath) + ".json";
 
 			Writer.Write(SiteJson, OutputFilePath);
 

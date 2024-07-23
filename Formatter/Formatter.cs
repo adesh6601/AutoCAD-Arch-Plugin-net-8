@@ -3,6 +3,7 @@ using Model;
 
 public class Formatter
 {
+    const string BuildingsKey = "Buildings";
     public void Format(JObject ProjectProperties, Site site, JObject buildingJson)
     {
       
@@ -23,20 +24,20 @@ public class Formatter
 
     public void AddBuildings(Site site, JObject buildingJson)
     {
-        buildingJson["site"]["Buildings"] = new JObject();
+        buildingJson["site"][BuildingsKey] = new JObject();
 
         foreach (string buildingId in site.Buildings.Keys)
         {
-            buildingJson["site"]["Buildings"][buildingId] = new JObject();
+            buildingJson["site"][BuildingsKey][buildingId] = new JObject();
 
-            buildingJson["site"]["Buildings"][buildingId]["units"] = "ft";
+            buildingJson["site"][BuildingsKey][buildingId]["units"] = "ft";
 
-            buildingJson["site"]["Buildings"][buildingId]["Levels"] = new JObject();
+            buildingJson["site"][BuildingsKey][buildingId]["Levels"] = new JObject();
 
             foreach (string floorId in site.Buildings[buildingId].Floors.Keys)
             {
                 LevelFormatter floorObject = new LevelFormatter(site.Buildings[buildingId].Floors[floorId]);
-                JObject layerJObject = JObject.FromObject(floorObject.layers["layer-1"]);
+                JObject layerJObject = JObject.FromObject(floorObject.Layers["layer-1"]);
 
                 // Add elevation and altitude properties
                 var keyValuePairs = buildingJson["siteProperties"]["Level"][floorId];
@@ -45,10 +46,8 @@ public class Formatter
                 layerJObject["altitude"] = double.Parse(keyValuePairs["Height"].ToString());
 
                 // Add the updated layerJObject to the Levels object in the JSON
-                buildingJson["site"]["Buildings"][buildingId]["Levels"][floorId] = layerJObject;
-
+                buildingJson["site"][BuildingsKey][buildingId]["Levels"][floorId] = layerJObject;
             }
-
         }
     }   
 }
