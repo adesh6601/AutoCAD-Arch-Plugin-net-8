@@ -17,22 +17,22 @@
 
   <ItemGroup>
     <Reference Include="accoremgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\accoremgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Autodesk\AutoCAD 2025\accoremgd.dll</HintPath>
     </Reference>
     <Reference Include="Acdbmgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\acdbmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Autodesk\AutoCAD 2025\acdbmgd.dll</HintPath>
     </Reference>
     <Reference Include="Acmgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\acmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Autodesk\AutoCAD 2025\acmgd.dll</HintPath>
     </Reference>
     <Reference Include="AecArchMgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\ACA\AecArchMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Autodesk\AutoCAD 2025\ACA\AecArchMgd.dll</HintPath>
     </Reference>
     <Reference Include="AecBaseMgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\ACA\AecBaseMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Autodesk\AutoCAD 2025\ACA\AecBaseMgd.dll</HintPath>
     </Reference>
     <Reference Include="AecProjectBaseMgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2024\ACA\AecProjectBaseMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Autodesk\AutoCAD 2025\ACA\AecProjectBaseMgd.dll</HintPath>
     </Reference>
   </ItemGroup>
 

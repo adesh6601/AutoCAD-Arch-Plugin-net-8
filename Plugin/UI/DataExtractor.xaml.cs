@@ -6,10 +6,8 @@ using static Autodesk.AutoCAD.LayerManager.LayerFilter;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 
-
 namespace Plugin.UI
 {
-
     public partial class DataExtractor : System.Windows.Window
     {
 
@@ -23,7 +21,8 @@ namespace Plugin.UI
 
         public bool IsCloseButtonClicked { get; set; } = false;
 
-        Plugin Plugin;
+        public const string  PluginName = "Data Extractor";
+
         public DataExtractor()
         {
             InitializeComponent();
@@ -46,7 +45,7 @@ namespace Plugin.UI
             else
             {
                 projectRadioButton.IsChecked = false;
-                System.Windows.MessageBox.Show("Please choose a project APJ file first.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please choose a project APJ file first.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
         }
@@ -65,7 +64,7 @@ namespace Plugin.UI
             else
             {
                 viewsRadioButton.IsChecked = false;
-                System.Windows.MessageBox.Show("Please choose a project APJ file first.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please choose a project APJ file first.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
         }
@@ -99,7 +98,7 @@ namespace Plugin.UI
             }
             else
             {
-                System.Windows.MessageBox.Show("Please choose a project APJ file.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please choose a project APJ file.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
         }
@@ -117,9 +116,10 @@ namespace Plugin.UI
                 {
                     SelectedViewPath = openFileDialog.FileName;
 
-                    if (!SelectedViewPath.Contains(Path.GetDirectoryName(SelectedProjectPath)))
+                    string? projectPath = Path.GetDirectoryName(SelectedProjectPath);
+                    if (projectPath!=null && !SelectedViewPath.Contains(projectPath))
                     {
-                        System.Windows.MessageBox.Show("The DWG file must be from the previously browsed project.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("The DWG file must be from the previously browsed project.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
@@ -129,7 +129,7 @@ namespace Plugin.UI
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("Please choose a file that has the .dwg extension.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("Please choose a file that has the .dwg extension.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
                 IsReadProjectEnabled = false;
@@ -138,9 +138,9 @@ namespace Plugin.UI
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
-            if (OutputFolderPath != null && SelectedProjectPath != null && IsReadProjectEnabled == false)
+            if (OutputFolderPath != null && SelectedProjectPath != null && !IsReadProjectEnabled)
             {
-                Plugin = new Plugin();
+
                 if (viewTextPath.Text != "")
                 {
                     Plugin.ProjectPath = SelectedProjectPath;
@@ -155,17 +155,17 @@ namespace Plugin.UI
                 {
                     if (viewBrowseButton.IsEnabled)
                     {
-                        System.Windows.MessageBox.Show("Please choose a file that has the .dwg extension.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("Please choose a file that has the .dwg extension.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("Please select one of the options provided earlier.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("Please select one of the options provided earlier.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }
-            else if (OutputFolderPath != null && SelectedProjectPath != null && IsReadProjectEnabled == true)
+            else if (OutputFolderPath != null && SelectedProjectPath != null && IsReadProjectEnabled)
             {
-                Plugin = new Plugin();
+ 
                 Plugin.ProjectPath = SelectedProjectPath;
                 Plugin.OutputFilePath = OutputFolderPath;
                 IsCloseButtonClicked = true;
@@ -175,11 +175,11 @@ namespace Plugin.UI
             }
             else if (SelectedProjectPath == null)
             {
-                System.Windows.MessageBox.Show("Please select one of the options provided earlier.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please select one of the options provided earlier.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else
             {
-                System.Windows.MessageBox.Show("Please Select the folder where you would like to save the generated JSON file.", "Data Extractor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please Select the folder where you would like to save the generated JSON file.", PluginName, MessageBoxButton.OK, MessageBoxImage.Warning);
 
             }
 

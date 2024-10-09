@@ -7,12 +7,12 @@ namespace Plugin
 {
 	public class Plugin
 	{
-		public static string ProjectPath { get; set; }
-		public static string ViewsPath { get; set; }
-		public static string OutputFilePath { get; set; }
+		public static string ProjectPath { get; set; } = string.Empty;
+        public static string ViewsPath { get; set; } = string.Empty;
+        public static string OutputFilePath { get; set; } = string.Empty;
 
-		[CommandMethod("InitiateReadProject")]
-		public void InitiateReadProject()
+        [CommandMethod("InitiateReadProject")]
+		public static void InitiateReadProject()
 		{
             Reader Reader = new Reader();
             Builder Builder = new Builder();
@@ -29,17 +29,17 @@ namespace Plugin
 
 			Builder.Build(Entities, Site);
 
-			Formatter.Format(ProjectProperties, Site, SiteJson);
+			Formatter.Format(ProjectProperties, Site, SiteJson);         
 
-			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + "Site.json";
+            OutputFilePath += "\\" + "Site.json";
 
-			Writer.Write(SiteJson, OutputFilePath);
+            Writer.Write(SiteJson, OutputFilePath);
 
 			System.Windows.MessageBox.Show("Data Extracted Successfully");
 		}
 
 		[CommandMethod("InitiateReadView")]
-		public void InitiateReadView()
+		public static void InitiateReadView()
 		{
             Reader Reader = new Reader();
             Builder Builder = new Builder();
@@ -58,9 +58,9 @@ namespace Plugin
 
 			Formatter.Format(ProjectProperties, Site, SiteJson);
 
-			OutputFilePath = System.IO.Path.GetDirectoryName(ProjectPath) + "\\" + System.IO.Path.GetFileNameWithoutExtension(ViewsPath) + ".json";
+            OutputFilePath += "\\" + System.IO.Path.GetFileNameWithoutExtension(ViewsPath) + ".json";
 
-			Writer.Write(SiteJson, OutputFilePath);
+            Writer.Write(SiteJson, OutputFilePath);
 
 			System.Windows.MessageBox.Show("Data Extracted Successfully");
 		}

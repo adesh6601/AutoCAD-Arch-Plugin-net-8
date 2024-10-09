@@ -12,7 +12,8 @@ namespace Collection
 
 		public object ConvertEntity(object entity, string entityType, double unitConversionFactor)
 		{
-			UnitConversionFactor = unitConversionFactor;
+
+            UnitConversionFactor = unitConversionFactor;
 
 			if (entityType == "wall")
 			{
@@ -101,8 +102,10 @@ namespace Collection
 
 				if (space.Surfaces.Count < 2)
 				{
-					return null;
-				}
+#pragma warning disable CS8603 // Possible null reference return.
+                    return null;
+#pragma warning restore CS8603 // Possible null reference return.
+                }
 
 				Component.Space convertedSpace = new Component.Space();
 
@@ -119,8 +122,10 @@ namespace Collection
 				return convertedZone;
 			}
 
-			return null;
-		}
+#pragma warning disable CS8603 // Possible null reference return.
+            return null;
+#pragma warning restore CS8603 // Possible null reference return.
+        }
 
 		public void ConvertWall(Wall wall, Component.Wall convertedWall)
 		{
@@ -128,10 +133,13 @@ namespace Collection
 
 			convertedWall.ObjectId = wall.ObjectId.ToString();
 
-			convertedWall.Bounds.Add(new Component.Point(wall.Bounds.Value.MaxPoint.X / UnitConversionFactor, wall.Bounds.Value.MaxPoint.Y / UnitConversionFactor, wall.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedWall.Bounds.Add(new Component.Point(wall.Bounds.Value.MinPoint.X / UnitConversionFactor, wall.Bounds.Value.MinPoint.Y / UnitConversionFactor, wall.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(wall.Bounds.HasValue)
+			{
+                convertedWall.Bounds.Add(new Component.Point(wall.Bounds.Value.MaxPoint.X / UnitConversionFactor, wall.Bounds.Value.MaxPoint.Y / UnitConversionFactor, wall.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedWall.Bounds.Add(new Component.Point(wall.Bounds.Value.MinPoint.X / UnitConversionFactor, wall.Bounds.Value.MinPoint.Y / UnitConversionFactor, wall.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+            }
 
-			convertedWall.Description = wall.Description;
+            convertedWall.Description = wall.Description;
 
 			convertedWall.Length = wall.Length / UnitConversionFactor;
 			convertedWall.Width = wall.Width / UnitConversionFactor;
@@ -164,10 +172,13 @@ namespace Collection
 
 			convertedCurtainWall.ObjectId = curtainWall.ObjectId.ToString();
 
-			convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MaxPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MinPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if (curtainWall.Bounds.HasValue)
+			{
+                convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MaxPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MinPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+            }
 
-			convertedCurtainWall.CellCount = curtainWall.CellCount;
+            convertedCurtainWall.CellCount = curtainWall.CellCount;
 
 			convertedCurtainWall.Description = curtainWall.Description;
 
@@ -179,9 +190,8 @@ namespace Collection
 			convertedCurtainWall.EndPoint = new Component.Point(curtainWall.EndPoint.X / UnitConversionFactor, curtainWall.EndPoint.Y / UnitConversionFactor, curtainWall.EndPoint.Z / UnitConversionFactor);
 
 			convertedCurtainWall.CollisionType = curtainWall.CollisionType.ToString();
-
-			try
-			{
+            try
+            {
 				var arc = (Arc)curtainWall.BaseCurve;
 
 				Component.WallTypes.CurtainArcWall CurtainArcWallObject = new Component.WallTypes.CurtainArcWall();
@@ -199,8 +209,8 @@ namespace Collection
 
 				convertedCurtainWall.ArcWallObject = CurtainArcWallObject;
 			}
-			catch (Exception ex)
-			{
+			catch (Exception)
+            {
 				convertedCurtainWall.ArcWallObject = null;
 			}
 		}
@@ -211,10 +221,13 @@ namespace Collection
 
 			convertedCurtainWall.ObjectId = curtainWall.ObjectId.ToString();
 
-			convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MaxPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MinPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(curtainWall.Bounds.HasValue)
+			{
+                convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MaxPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedCurtainWall.Bounds.Add(new Component.Point(curtainWall.Bounds.Value.MinPoint.X / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Y / UnitConversionFactor, curtainWall.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+            }
 
-			convertedCurtainWall.CellCount = curtainWall.CellCount;
+            convertedCurtainWall.CellCount = curtainWall.CellCount;
 
 			convertedCurtainWall.Description = curtainWall.Description;
 
@@ -234,10 +247,13 @@ namespace Collection
 
 			convertedWindow.ObjectId = window.ObjectId.ToString();
 
-			convertedWindow.Bounds.Add(new Component.Point(window.Bounds.Value.MaxPoint.X / UnitConversionFactor, window.Bounds.Value.MaxPoint.Y / UnitConversionFactor, window.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedWindow.Bounds.Add(new Component.Point(window.Bounds.Value.MinPoint.X / UnitConversionFactor, window.Bounds.Value.MinPoint.Y / UnitConversionFactor, window.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(window.Bounds.HasValue)
+			{
+                convertedWindow.Bounds.Add(new Component.Point(window.Bounds.Value.MaxPoint.X / UnitConversionFactor, window.Bounds.Value.MaxPoint.Y / UnitConversionFactor, window.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedWindow.Bounds.Add(new Component.Point(window.Bounds.Value.MinPoint.X / UnitConversionFactor, window.Bounds.Value.MinPoint.Y / UnitConversionFactor, window.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+            }
 
-			convertedWindow.Description = window.Description;
+            convertedWindow.Description = window.Description;
 
 			convertedWindow.Width = window.Width / UnitConversionFactor;
 			convertedWindow.Height = window.Height / UnitConversionFactor;
@@ -258,10 +274,13 @@ namespace Collection
 
 			convertedWindowAssembly.ObjectId = windowAssembly.ObjectId.ToString();
 
-			convertedWindowAssembly.Bounds.Add(new Component.Point(windowAssembly.Bounds.Value.MaxPoint.X / UnitConversionFactor, windowAssembly.Bounds.Value.MaxPoint.Y / UnitConversionFactor, windowAssembly.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedWindowAssembly.Bounds.Add(new Component.Point(windowAssembly.Bounds.Value.MinPoint.X / UnitConversionFactor, windowAssembly.Bounds.Value.MinPoint.Y / UnitConversionFactor, windowAssembly.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(windowAssembly.Bounds.HasValue)
+			{
+                convertedWindowAssembly.Bounds.Add(new Component.Point(windowAssembly.Bounds.Value.MaxPoint.X / UnitConversionFactor, windowAssembly.Bounds.Value.MaxPoint.Y / UnitConversionFactor, windowAssembly.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedWindowAssembly.Bounds.Add(new Component.Point(windowAssembly.Bounds.Value.MinPoint.X / UnitConversionFactor, windowAssembly.Bounds.Value.MinPoint.Y / UnitConversionFactor, windowAssembly.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+            }
 
-			convertedWindowAssembly.CellCount = windowAssembly.CellCount;
+            convertedWindowAssembly.CellCount = windowAssembly.CellCount;
 
 			convertedWindowAssembly.Description = windowAssembly.Description;
 
@@ -283,10 +302,13 @@ namespace Collection
 
 			convertedDoor.ObjectId = door.ObjectId.ToString();
 
-			convertedDoor.Bounds.Add(new Component.Point(door.Bounds.Value.MaxPoint.X / UnitConversionFactor, door.Bounds.Value.MaxPoint.Y / UnitConversionFactor, door.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedDoor.Bounds.Add(new Component.Point(door.Bounds.Value.MinPoint.X / UnitConversionFactor, door.Bounds.Value.MinPoint.Y / UnitConversionFactor, door.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(door.Bounds.HasValue)
+			{
+                convertedDoor.Bounds.Add(new Component.Point(door.Bounds.Value.MaxPoint.X / UnitConversionFactor, door.Bounds.Value.MaxPoint.Y / UnitConversionFactor, door.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedDoor.Bounds.Add(new Component.Point(door.Bounds.Value.MinPoint.X / UnitConversionFactor, door.Bounds.Value.MinPoint.Y / UnitConversionFactor, door.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+            }
 
-			convertedDoor.Description = door.Description;
+            convertedDoor.Description = door.Description;
 
 			convertedDoor.Width = door.Width / UnitConversionFactor;
 			convertedDoor.Height = door.Height / UnitConversionFactor;
@@ -306,10 +328,13 @@ namespace Collection
 
 			convertedOpening.ObjectId = opening.ObjectId.ToString();
 
-			convertedOpening.Bounds.Add(new Component.Point(opening.Bounds.Value.MaxPoint.X / UnitConversionFactor, opening.Bounds.Value.MaxPoint.Y / UnitConversionFactor, opening.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedOpening.Bounds.Add(new Component.Point(opening.Bounds.Value.MinPoint.X / UnitConversionFactor, opening.Bounds.Value.MinPoint.Y / UnitConversionFactor, opening.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(opening.Bounds.HasValue)
+			{
+                convertedOpening.Bounds.Add(new Component.Point(opening.Bounds.Value.MaxPoint.X / UnitConversionFactor, opening.Bounds.Value.MaxPoint.Y / UnitConversionFactor, opening.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedOpening.Bounds.Add(new Component.Point(opening.Bounds.Value.MinPoint.X / UnitConversionFactor, opening.Bounds.Value.MinPoint.Y / UnitConversionFactor, opening.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+            }
 
-			convertedOpening.ShapeType = opening.ShapeType.ToString();
+            convertedOpening.ShapeType = opening.ShapeType.ToString();
 			convertedOpening.LineTypeID = opening.LinetypeId.ToString();
 
 			convertedOpening.Width = opening.Width / UnitConversionFactor;
@@ -443,10 +468,14 @@ namespace Collection
 
 			convertedSpace.ObjectId = space.ObjectId.ToString();
 
-			convertedSpace.Bounds.Add(new Component.Point(space.Bounds.Value.MaxPoint.X / UnitConversionFactor, space.Bounds.Value.MaxPoint.Y / UnitConversionFactor, space.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedSpace.Bounds.Add(new Component.Point(space.Bounds.Value.MinPoint.X / UnitConversionFactor, space.Bounds.Value.MinPoint.Y / UnitConversionFactor, space.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(space.Bounds.HasValue)
+			{
+                convertedSpace.Bounds.Add(new Component.Point(space.Bounds.Value.MaxPoint.X / UnitConversionFactor, space.Bounds.Value.MaxPoint.Y / UnitConversionFactor, space.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedSpace.Bounds.Add(new Component.Point(space.Bounds.Value.MinPoint.X / UnitConversionFactor, space.Bounds.Value.MinPoint.Y / UnitConversionFactor, space.Bounds.Value.MinPoint.Z / UnitConversionFactor));
 
-			convertedSpace.Area = space.Area / UnitConversionFactor;
+            }
+
+            convertedSpace.Area = space.Area / UnitConversionFactor;
 
 			convertedSpace.StartPoint = new Component.Point(space.StartPoint.X / UnitConversionFactor, space.StartPoint.Y / UnitConversionFactor, space.StartPoint.Z / UnitConversionFactor);
 			convertedSpace.EndPoint = new Component.Point(space.EndPoint.X / UnitConversionFactor, space.EndPoint.Y / UnitConversionFactor, space.EndPoint.Z / UnitConversionFactor);
@@ -486,10 +515,14 @@ namespace Collection
 
 			convertedZone.ObjectId = zone.ObjectId.ToString();
 
-			convertedZone.Bounds.Add(new Component.Point(zone.Bounds.Value.MaxPoint.X / UnitConversionFactor, zone.Bounds.Value.MaxPoint.Y / UnitConversionFactor, zone.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
-			convertedZone.Bounds.Add(new Component.Point(zone.Bounds.Value.MinPoint.X / UnitConversionFactor, zone.Bounds.Value.MinPoint.Y / UnitConversionFactor, zone.Bounds.Value.MinPoint.Z / UnitConversionFactor));
+			if(zone.Bounds.HasValue)
+			{
+                convertedZone.Bounds.Add(new Component.Point(zone.Bounds.Value.MaxPoint.X / UnitConversionFactor, zone.Bounds.Value.MaxPoint.Y / UnitConversionFactor, zone.Bounds.Value.MaxPoint.Z / UnitConversionFactor));
+                convertedZone.Bounds.Add(new Component.Point(zone.Bounds.Value.MinPoint.X / UnitConversionFactor, zone.Bounds.Value.MinPoint.Y / UnitConversionFactor, zone.Bounds.Value.MinPoint.Z / UnitConversionFactor));
 
-			convertedZone.Area = zone.Area / UnitConversionFactor;
+            }
+
+            convertedZone.Area = zone.Area / UnitConversionFactor;
 
 			convertedZone.StartPoint = new Component.Point(zone.StartPoint.X / UnitConversionFactor, zone.StartPoint.Y / UnitConversionFactor, zone.StartPoint.Z / UnitConversionFactor);
 			convertedZone.EndPoint = new Component.Point(zone.EndPoint.X / UnitConversionFactor, zone.EndPoint.Y / UnitConversionFactor, zone.EndPoint.Z / UnitConversionFactor);
@@ -502,27 +535,32 @@ namespace Collection
 		{
 			Component.WindowAssembly windowAssemblyAsWall = (Component.WindowAssembly)oldWindowAssemblyAsWall;
 
-			wall.DisplayName = windowAssemblyAsWall.DisplayName;
+            if (windowAssemblyAsWall != null )
+            {
+                wall.DisplayName = windowAssemblyAsWall.DisplayName;
 
-			wall.ObjectId = windowAssemblyAsWall.ObjectId.ToString();
+                if (windowAssemblyAsWall.ObjectId != null) { wall.ObjectId = windowAssemblyAsWall.ObjectId.ToString(); }
+                
+                wall.DivisionsAndLevels = windowAssemblyAsWall.DivisionsAndLevels;
 
-			wall.DivisionsAndLevels = windowAssemblyAsWall.DivisionsAndLevels;
+                wall.Bounds = windowAssemblyAsWall.Bounds;
 
-			wall.Bounds = windowAssemblyAsWall.Bounds;
+                wall.Description = windowAssemblyAsWall.Description;
 
-			wall.Description = windowAssemblyAsWall.Description;
+                wall.Length = windowAssemblyAsWall.Length;
+                wall.BaseHeight = windowAssemblyAsWall.Height;
+					
+                wall.StartPoint = new Component.Point(windowAssemblyAsWall.StartPoint.X, windowAssemblyAsWall.StartPoint.Y, windowAssemblyAsWall.StartPoint.Z);
+                wall.EndPoint = new Component.Point(windowAssemblyAsWall.EndPoint.X, windowAssemblyAsWall.EndPoint.Y, windowAssemblyAsWall.EndPoint.Z);
 
-			wall.Length = windowAssemblyAsWall.Length;
-			wall.BaseHeight = windowAssemblyAsWall.Height;
+                wall.CollisionType = windowAssemblyAsWall.CollisionType.ToString();
 
-			wall.StartPoint = new Component.Point(windowAssemblyAsWall.StartPoint.X, windowAssemblyAsWall.StartPoint.Y, windowAssemblyAsWall.StartPoint.Z);
-			wall.EndPoint = new Component.Point(windowAssemblyAsWall.EndPoint.X, windowAssemblyAsWall.EndPoint.Y, windowAssemblyAsWall.EndPoint.Z);
+                wall.Style = windowAssemblyAsWall.Style;
+
+                wall.MaterialName = windowAssemblyAsWall.MaterialName;
+            }
+
 			
-			wall.CollisionType = windowAssemblyAsWall.CollisionType.ToString();
-
-			wall.Style = windowAssemblyAsWall.Style;
-
-			wall.MaterialName = windowAssemblyAsWall.MaterialName;
 		}
 
 		public static string CheckSegmentType(Wall wall)

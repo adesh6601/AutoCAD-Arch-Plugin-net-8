@@ -44,7 +44,7 @@ public class Reader
     const string CurtainWallUnit = "curtainWallUnit";
     const string Slab = "slab";
     const string RoofSlab = "roofSlab";
-    const string Space = "Space";
+    const string Space = "space";
     const string Zone = "zone";
     const string Wall = "wall";
 
@@ -269,9 +269,8 @@ public class Reader
 	public void ReadEntitiesForProject(ProjectFile projectFile, Entities entities)
 	{
 		OpenFileInApp(projectFile);
-
 		SetDatabase();
-		SetTransaction();
+        SetTransaction();
 		SetBlockTableRecorde();
 		SetUnit();
 		SetUnitConversionFactor();
@@ -495,14 +494,13 @@ public class Reader
 	public void OpenFileInApp(ProjectFile file)
 	{
 		string dwgFullPath = file.DrawingFullPath;
-
 		try
 		{
 			dynamic acadApp = ComInterop.GetActiveAcadApp();
 			if (System.IO.File.Exists(dwgFullPath))
 			{
 				OpenedDoc = acadApp.Documents.Open(dwgFullPath);
-				SetDocument(file);
+                SetDocument(file);
 			}
 		}
 		catch (Autodesk.AutoCAD.Runtime.Exception ex)
@@ -1135,6 +1133,6 @@ public class Reader
 
 	public void CloseFileInApp()
 	{
-		OpenedDoc.Close();
+         OpenedDoc.Close();
 	}
 }

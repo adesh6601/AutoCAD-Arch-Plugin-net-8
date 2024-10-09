@@ -69,7 +69,8 @@ namespace Plugin.UI
                 };
                 existingTab.Panels.Add(newPanel);
 
-                //string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                //MessageBox.Show(System.IO.Path.Combine(currentDirectory, "..\\..\\Resources\\logo2025.png"));
                 //string exchangeImagePath = System.IO.Path.Combine(currentDirectory, "..\\..\\Resources\\logo2025.png");
 
                 //For running in debug mode

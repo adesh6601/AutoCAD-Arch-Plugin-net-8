@@ -7,8 +7,8 @@
 		public double BaseHeight { get; set; }
 		public double Area { get; set; }
 
-		public Point StartPoint { get; set; }
-		public Point EndPoint { get; set; }
+		public Point? StartPoint { get; set; }
+		public Point? EndPoint { get; set; }
 
 		public double Rotation { get; set; }
 
